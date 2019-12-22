@@ -1,10 +1,8 @@
-use std::boxed::Box;
-use std::error::Error;
 use std::process::Command;
 use std::process::ExitStatus;
 use transition::Transition;
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), failure::Error> {
     let tx = Transition::from("blue white")
         .on_success("green")
         .on_failure("red")
