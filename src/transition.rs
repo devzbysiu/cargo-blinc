@@ -3,6 +3,7 @@ use blinkrs::Color;
 use blinkrs::Message;
 use crossbeam_channel::unbounded;
 use crossbeam_channel::Sender;
+use crossbeam_channel::TryRecvError;
 use std::thread;
 use std::time::Duration;
 
@@ -41,9 +42,9 @@ impl Transition {
         thread::spawn(move || -> Result<usize, failure::Error> {
             loop {
                 match receiver.try_recv() {
-                    Ok(Msg::Success) => self.send_success_msg()?,
-                    Ok(Msg::Failure) => self.send_failure_msg()?,
-                    Err(_) => NOT_IMPORTANT,
+                    Ok(Msg::Success) => break self.send_success_msg(),
+                    Ok(Msg::Failure) => break self.send_failure_msg(),
+                    Err(_) => {}
                 };
                 self.play_transition();
             }

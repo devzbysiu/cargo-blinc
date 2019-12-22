@@ -21,6 +21,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         println!("failure");
         sender.send(Msg::Failure)?;
     }
-    std::thread::sleep(Duration::from_secs(2));
+    std::thread::sleep(Duration::from_secs(15));
     Ok(())
 }
