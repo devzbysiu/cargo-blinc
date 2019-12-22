@@ -3,7 +3,6 @@ use blinkrs::Color;
 use blinkrs::Message;
 use crossbeam_channel::unbounded;
 use crossbeam_channel::Sender;
-use crossbeam_channel::TryRecvError;
 use std::thread;
 use std::time::Duration;
 
@@ -53,22 +52,18 @@ impl Transition {
     }
 
     fn send_success_msg(&self) -> Result<usize, failure::Error> {
-        println!("blinking with success");
         self.blinkers
-            .send(self.success_msg.unwrap_or(Message::Fade(
-                Color::from("green"),
-                Duration::from_millis(500),
-            )))?;
+            .send(self.success_msg.unwrap_or(self.color_msg("green")))?;
         Ok(NOT_IMPORTANT)
     }
 
+    fn color_msg(&self, color_name: &str) -> Message {
+        Message::Fade(Color::from(color_name), Duration::from_millis(500))
+    }
+
     fn send_failure_msg(&self) -> Result<usize, failure::Error> {
-        println!("blinking with failure");
         self.blinkers
-            .send(self.failure_msg.unwrap_or(Message::Fade(
-                Color::from("red"),
-                Duration::from_millis(500),
-            )))?;
+            .send(self.failure_msg.unwrap_or(self.color_msg("red")))?;
         Ok(NOT_IMPORTANT)
     }
 
@@ -79,19 +74,12 @@ impl Transition {
         }
     }
 
-    pub fn on_success<I: Into<String>>(mut self, color_name: I) -> Self {
+    pub fn on_success(mut self, color_name: &str) -> Self {
         self.success_msg = Some(self.color_msg(color_name));
         self
     }
 
-    fn color_msg<I: Into<String>>(&self, color_name: I) -> Message {
-        Message::Fade(
-            Color::from(color_name.into().as_str()),
-            Duration::from_millis(500),
-        )
-    }
-
-    pub fn on_failure<I: Into<String>>(mut self, color_name: I) -> Self {
+    pub fn on_failure(mut self, color_name: &str) -> Self {
         self.failure_msg = Some(self.color_msg(color_name));
         self
     }
