@@ -2,21 +2,18 @@ use std::boxed::Box;
 use std::error::Error;
 use std::process::Command;
 use std::process::ExitStatus;
-use std::time::Duration;
-use transition::Msg;
 use transition::Transition;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let transition = Transition::from("blue white")
+    let tx = Transition::from("blue white")
         .on_success("green")
-        .on_failure("red");
-    let sender = transition.go()?;
+        .on_failure("red")
+        .run()?;
     if run_tests()?.success() {
-        sender.send(Msg::Success)?;
+        tx.notify_success()?;
     } else {
-        sender.send(Msg::Failure)?;
+        tx.notify_failure()?;
     }
-    std::thread::sleep(Duration::from_secs(2));
     Ok(())
 }
 
