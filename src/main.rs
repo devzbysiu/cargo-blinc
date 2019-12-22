@@ -1,12 +1,10 @@
 use std::boxed::Box;
 use std::error::Error;
+use std::process::Command;
+use std::process::ExitStatus;
 use std::time::Duration;
-use testrunner::run_tests;
 use transition::Msg;
 use transition::Transition;
-
-mod testrunner;
-mod transition;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let transition = Transition::from("blue white")
@@ -20,4 +18,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
     std::thread::sleep(Duration::from_secs(2));
     Ok(())
+}
+
+fn run_tests() -> Result<ExitStatus, failure::Error> {
+    Ok(Command::new("cargo").arg("test").status()?)
 }

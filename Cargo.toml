@@ -5,7 +5,5 @@ authors = ["Bartosz Zbytniewski <bartosz.zbytniewski.dev@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-blinkrs = "0.2.1"
-lazy_static = "1.4.0"
 failure = "0.1.6"
-crossbeam-channel = "0.4.0"
+transition = { path = "../transition", version = "0.1.0" }
