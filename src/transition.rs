@@ -7,6 +7,8 @@ use std::time::Duration;
 pub struct Transition {
     blinkers: Blinkers,
     messages: Vec<Message>,
+    success_msg: Option<Message>,
+    failure_msg: Option<Message>,
 }
 
 impl From<&str> for Transition {
@@ -20,16 +22,39 @@ impl From<&str> for Transition {
                 Duration::from_millis(500),
             ));
         }
-        Transition { blinkers, messages }
+        Transition {
+            blinkers,
+            messages,
+            success_msg: None,
+            failure_msg: None,
+        }
     }
 }
 
 impl Transition {
-    pub fn go(self) -> Result<(), Error> {
-        for message in self.messages {
-            self.blinkers.send(message)?;
-            std::thread::sleep(Duration::from_millis(500));
+    pub fn go(self) -> ! {
+        loop {
+            for &message in &self.messages {
+                self.blinkers.send(message).unwrap();
+                std::thread::sleep(Duration::from_millis(500));
+            }
         }
-        Ok(())
+    }
+
+    pub fn on_success<I: Into<String>>(mut self, color_name: I) -> Self {
+        self.success_msg = Some(self.color_msg(color_name));
+        self
+    }
+
+    fn color_msg<I: Into<String>>(&self, color_name: I) -> Message {
+        Message::Fade(
+            Color::from(color_name.into().as_str()),
+            Duration::from_millis(500),
+        )
+    }
+
+    pub fn on_failure<I: Into<String>>(mut self, color_name: I) -> Self {
+        self.failure_msg = Some(self.color_msg(color_name));
+        self
     }
 }
