@@ -9,18 +9,15 @@ mod testrunner;
 mod transition;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let transition = Transition::from("red blue green red blue")
+    let transition = Transition::from("blue white")
         .on_success("green")
         .on_failure("red");
     let sender = transition.go()?;
-    std::thread::sleep(Duration::from_secs(5));
     if run_tests()?.success() {
-        println!("success");
         sender.send(Msg::Success)?;
     } else {
-        println!("failure");
         sender.send(Msg::Failure)?;
     }
-    std::thread::sleep(Duration::from_secs(15));
+    std::thread::sleep(Duration::from_secs(2));
     Ok(())
 }

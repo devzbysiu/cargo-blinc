@@ -62,6 +62,7 @@ impl Transition {
     }
 
     fn send_failure_msg(&self) -> Result<usize, failure::Error> {
+        println!("blinking with failure");
         self.blinkers
             .send(self.failure_msg.unwrap_or(self.color_msg("red")))?;
         Ok(NOT_IMPORTANT)
