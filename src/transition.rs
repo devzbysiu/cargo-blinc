@@ -6,7 +6,7 @@ use std::time::Duration;
 
 pub struct Transition {
     blinkers: Blinkers,
-    messages: Vec<Message>,
+    transition: Vec<Message>,
     success_msg: Option<Message>,
     failure_msg: Option<Message>,
 }
@@ -15,16 +15,16 @@ impl From<&str> for Transition {
     fn from(colors: &str) -> Self {
         let blinkers: Blinkers =
             Blinkers::new().unwrap_or_else(|_| panic!("Could not find device"));
-        let mut messages = Vec::new();
+        let mut transition = Vec::new();
         for color_name in colors.split(' ') {
-            messages.push(Message::Fade(
+            transition.push(Message::Fade(
                 Color::from(color_name),
                 Duration::from_millis(500),
             ));
         }
         Transition {
             blinkers,
-            messages,
+            transition,
             success_msg: None,
             failure_msg: None,
         }
@@ -33,7 +33,7 @@ impl From<&str> for Transition {
 
 impl Transition {
     pub fn go(self) {
-        let messages = self.messages.clone();
+        let messages = self.transition.clone();
         thread::spawn(move || loop {
             for &message in &messages {
                 self.blinkers.send(message).unwrap();
