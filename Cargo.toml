@@ -6,4 +6,4 @@ edition = "2018"
 
 [dependencies]
 failure = "0.1.6"
-transition = { path = "../transition", version = "0.1.0" }
+transition = { path = "../transition", version = "0.2.0" }
