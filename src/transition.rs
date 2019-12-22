@@ -1,7 +1,7 @@
 use blinkrs::Blinkers;
 use blinkrs::Color;
 use blinkrs::Message;
-use failure::Error;
+use std::thread;
 use std::time::Duration;
 
 pub struct Transition {
@@ -32,13 +32,14 @@ impl From<&str> for Transition {
 }
 
 impl Transition {
-    pub fn go(self) -> ! {
-        loop {
-            for &message in &self.messages {
+    pub fn go(self) {
+        let messages = self.messages.clone();
+        thread::spawn(move || loop {
+            for &message in &messages {
                 self.blinkers.send(message).unwrap();
                 std::thread::sleep(Duration::from_millis(500));
             }
-        }
+        });
     }
 
     pub fn on_success<I: Into<String>>(mut self, color_name: I) -> Self {
