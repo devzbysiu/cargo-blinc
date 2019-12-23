@@ -2,6 +2,8 @@ use serde_derive::Deserialize;
 use std::fs::File;
 use std::io::prelude::*;
 
+const COMMAND_NAME: usize = 1;
+
 #[derive(Deserialize, Debug)]
 pub(crate) struct Config {
     transition: String,
@@ -13,24 +15,7 @@ pub(crate) struct Config {
 
 impl Config {
     pub(crate) fn init() -> Result<Config, failure::Error> {
-        let mut config = String::new();
-        File::open(".blink").and_then(|mut f| f.read_to_string(&mut config))?;
-        let mut config: Config = toml::from_str(&config)?;
-        let command = config.command;
-        let split_command = command.split(' ').collect::<Vec<&str>>();
-        config.command = Config::read_command(&split_command);
-        config.args = Some(
-            split_command
-                .iter()
-                .skip(1)
-                .map(|s| s.to_string())
-                .collect(),
-        );
-        Ok(config)
-    }
-
-    fn read_command(split_command: &Vec<&str>) -> String {
-        split_command.get(0).unwrap_or(&"echo").to_string()
+        Ok(init_config(read_config()?))
     }
 
     pub(crate) fn transition(&self) -> &str {
@@ -52,6 +37,36 @@ impl Config {
     pub(crate) fn success(&self) -> &str {
         &self.success
     }
+}
+
+fn read_config() -> Result<Config, failure::Error> {
+    let mut config = String::new();
+    File::open(".blink").and_then(|mut f| f.read_to_string(&mut config))?;
+    let config: Config = toml::from_str(&config)?;
+    Ok(config)
+}
+
+fn init_config(config: Config) -> Config {
+    let mut config = config;
+    let command = config.command;
+    let command_and_args = command.split(' ').collect::<Vec<&str>>();
+    config.command = read_command_name(&command_and_args);
+    config.args = read_args(&command_and_args);
+    config
+}
+
+fn read_command_name(split_command: &Vec<&str>) -> String {
+    split_command.first().unwrap_or(&"echo").to_string()
+}
+
+fn read_args(split_command: &Vec<&str>) -> Option<Vec<String>> {
+    Some(
+        split_command
+            .iter()
+            .skip(COMMAND_NAME)
+            .map(|s| s.to_string())
+            .collect(),
+    )
 }
 
 #[cfg(test)]
