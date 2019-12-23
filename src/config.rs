@@ -15,9 +15,12 @@ pub(crate) struct Config {
 
 impl Config {
     pub(crate) fn init() -> Result<Config, failure::Error> {
-        Ok(init_config(read_config()?))
+        Config::read_config(&mut File::open(".blink")?)
     }
 
+    pub(crate) fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
+        Ok(init_config(read_config(read)?))
+    }
     pub(crate) fn transition(&self) -> &str {
         &self.transition
     }
@@ -39,11 +42,11 @@ impl Config {
     }
 }
 
-fn read_config() -> Result<Config, failure::Error> {
-    let mut config = String::new();
-    File::open(".blink").and_then(|mut f| f.read_to_string(&mut config))?;
-    let config: Config = toml::from_str(&config)?;
-    Ok(config)
+fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
+    let mut config_contents = String::new();
+    read.read_to_string(&mut config_contents)?;
+    let c: Config = toml::from_str(&config_contents)?;
+    Ok(c)
 }
 
 fn init_config(config: Config) -> Config {
@@ -72,10 +75,19 @@ fn read_args(split_command: &Vec<&str>) -> Option<Vec<String>> {
 #[cfg(test)]
 mod test {
     use super::*;
+    use std::io;
 
     #[test]
     fn test_config_with_valid_config_file() -> Result<(), failure::Error> {
-        let c = Config::init()?;
+        let config_contents = r#"
+          transition = "blue white"
+          command = "cargo test"
+          failure = "red"
+          success = "green"
+        "#;
+
+        let c = Config::read_config(&mut ReaderMock::new(config_contents.to_string()))?;
+
         assert_eq!(
             c.transition(),
             "blue white",
@@ -88,5 +100,26 @@ mod test {
             "Testing command arguments of execution section"
         );
         Ok(())
+    }
+
+    struct ReaderMock {
+        contents: String,
+    }
+
+    impl ReaderMock {
+        fn new(contents: String) -> ReaderMock {
+            ReaderMock { contents }
+        }
+    }
+
+    impl Read for ReaderMock {
+        fn read(&mut self, _buf: &mut [u8]) -> io::Result<usize> {
+            Ok(1)
+        }
+
+        fn read_to_string(&mut self, buf: &mut String) -> io::Result<usize> {
+            self.contents.as_bytes().read_to_string(buf)?;
+            Ok(buf.len())
+        }
     }
 }
