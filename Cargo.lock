@@ -48,7 +48,7 @@ dependencies = [
 
 [[package]]
 name = "cargo-blinkest"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)",
