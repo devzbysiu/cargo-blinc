@@ -17,15 +17,20 @@ impl Config {
         File::open(".blink").and_then(|mut f| f.read_to_string(&mut config))?;
         let mut config: Config = toml::from_str(&config)?;
         let command = config.command;
-        let split_command: Vec<&str> = command.split(' ').collect();
-        config.command = split_command.get(0).unwrap_or(&"echo").to_string();
-        let args: Vec<String> = split_command
-            .iter()
-            .skip(1)
-            .map(|s| s.to_string())
-            .collect();
-        config.args = Some(args);
+        let split_command = command.split(' ').collect::<Vec<&str>>();
+        config.command = Config::read_command(&split_command);
+        config.args = Some(
+            split_command
+                .iter()
+                .skip(1)
+                .map(|s| s.to_string())
+                .collect(),
+        );
         Ok(config)
+    }
+
+    fn read_command(split_command: &Vec<&str>) -> String {
+        split_command.get(0).unwrap_or(&"echo").to_string()
     }
 
     pub(crate) fn transition(&self) -> &str {
