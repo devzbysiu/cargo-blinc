@@ -78,7 +78,7 @@ mod test {
     use std::io;
 
     #[test]
-    fn test_config_with_valid_config_file() -> Result<(), failure::Error> {
+    fn test_config_with_valid_config() -> Result<(), failure::Error> {
         let config_contents = r#"
           transition = "blue white"
           command = "cargo test"
@@ -100,6 +100,50 @@ mod test {
             "Testing command arguments of execution section"
         );
         Ok(())
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_config_with_lack_of_transition_key() {
+        let config_contents = r#"
+          command = "cargo test"
+          failure = "red"
+          success = "green"
+        "#;
+        Config::read_config(&mut ReaderMock::new(config_contents.to_string())).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_config_with_lack_of_command_key() {
+        let config_contents = r#"
+          transition = "blue white"
+          failure = "red"
+          success = "green"
+        "#;
+        Config::read_config(&mut ReaderMock::new(config_contents.to_string())).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_config_with_lack_of_failure_key() {
+        let config_contents = r#"
+          transition = "blue white"
+          command = "cargo test"
+          success = "green"
+        "#;
+        Config::read_config(&mut ReaderMock::new(config_contents.to_string())).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_config_with_lack_of_success_key() {
+        let config_contents = r#"
+          transition = "blue white"
+          command = "cargo test"
+          failure = "red"
+        "#;
+        Config::read_config(&mut ReaderMock::new(config_contents.to_string())).unwrap();
     }
 
     struct ReaderMock {
