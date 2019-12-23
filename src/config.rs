@@ -49,29 +49,12 @@ impl Config {
     }
 }
 
-#[derive(Deserialize, Debug)]
-pub(crate) struct PreExecution {
-    transition: String,
-}
-
-#[derive(Deserialize, Debug)]
-pub(crate) struct Execution {
-    command: String,
-    args: Option<Vec<String>>,
-}
-
-#[derive(Deserialize, Debug)]
-pub(crate) struct PostExecution {
-    pub(crate) failure: String,
-    pub(crate) success: String,
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
-    fn test() -> Result<(), failure::Error> {
+    fn test_config_with_valid_config_file() -> Result<(), failure::Error> {
         let c = Config::init()?;
         assert_eq!(
             c.transition(),
