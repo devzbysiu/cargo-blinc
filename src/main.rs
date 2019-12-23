@@ -1,13 +1,17 @@
+use config::Config;
 use std::process::Command;
 use std::process::ExitStatus;
 use transition::Transition;
 
+mod config;
+
 fn main() -> Result<(), failure::Error> {
-    let tx = Transition::from("blue white")
-        .on_success("green")
-        .on_failure("red")
+    let config = Config::init()?;
+    let tx = Transition::from(config.transition())
+        .on_success(config.success())
+        .on_failure(config.failure())
         .run()?;
-    if run_tests()?.success() {
+    if run(config.command(), config.args())?.success() {
         tx.notify_success()?;
     } else {
         tx.notify_failure()?;
@@ -15,6 +19,6 @@ fn main() -> Result<(), failure::Error> {
     Ok(())
 }
 
-fn run_tests() -> Result<ExitStatus, failure::Error> {
-    Ok(Command::new("cargo").arg("test").status()?)
+fn run(cmd: &str, args: Vec<String>) -> Result<ExitStatus, failure::Error> {
+    Ok(Command::new(cmd).args(args).status()?)
 }
