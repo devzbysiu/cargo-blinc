@@ -84,9 +84,10 @@ mod test {
           command = "cargo test"
           failure = "red"
           success = "green"
-        "#;
+        "#
+        .to_string();
 
-        let c = Config::read_config(&mut ReaderMock::new(config_contents.to_string()))?;
+        let c = Config::read_config(&mut ReaderMock::new(config_contents))?;
 
         assert_eq!(
             c.transition(),
@@ -109,8 +110,9 @@ mod test {
           command = "cargo test"
           failure = "red"
           success = "green"
-        "#;
-        Config::read_config(&mut ReaderMock::new(config_contents.to_string())).unwrap();
+        "#
+        .to_string();
+        Config::read_config(&mut ReaderMock::new(config_contents)).unwrap();
     }
 
     #[test]
@@ -120,8 +122,9 @@ mod test {
           transition = "blue white"
           failure = "red"
           success = "green"
-        "#;
-        Config::read_config(&mut ReaderMock::new(config_contents.to_string())).unwrap();
+        "#
+        .to_string();
+        Config::read_config(&mut ReaderMock::new(config_contents)).unwrap();
     }
 
     #[test]
@@ -131,8 +134,9 @@ mod test {
           transition = "blue white"
           command = "cargo test"
           success = "green"
-        "#;
-        Config::read_config(&mut ReaderMock::new(config_contents.to_string())).unwrap();
+        "#
+        .to_string();
+        Config::read_config(&mut ReaderMock::new(config_contents)).unwrap();
     }
 
     #[test]
@@ -142,8 +146,9 @@ mod test {
           transition = "blue white"
           command = "cargo test"
           failure = "red"
-        "#;
-        Config::read_config(&mut ReaderMock::new(config_contents.to_string())).unwrap();
+        "#
+        .to_string();
+        Config::read_config(&mut ReaderMock::new(config_contents)).unwrap();
     }
 
     struct ReaderMock {
