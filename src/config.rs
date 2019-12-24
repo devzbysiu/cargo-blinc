@@ -89,17 +89,11 @@ mod test {
 
         let c = Config::read_config(&mut ReaderMock::new(config_contents))?;
 
-        assert_eq!(
-            c.transition(),
-            "blue white",
-            "Testing transition of pre-execution section"
-        );
-        assert_eq!(c.command(), "cargo", "Testing command of execution section");
-        assert_eq!(
-            c.args(),
-            vec!["test"],
-            "Testing command arguments of execution section"
-        );
+        assert_eq!(c.transition(), "blue white", "Testing transition");
+        assert_eq!(c.command(), "cargo", "Testing command");
+        assert_eq!(c.args(), vec!["test"], "Testing command arguments");
+        assert_eq!(c.failure(), "red", "Testing failure color");
+        assert_eq!(c.success(), "green", "Testing success color");
         Ok(())
     }
 
