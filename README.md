@@ -68,8 +68,8 @@ You can control all of these by configuration file.
 Run `cargo blinc --init` to initialize config. It will create **.blinc** file (note the dot) with following content:
 
 ```toml
-command = "cargo test"       # command with arguments
-pending = ["blue", "white"]  # transition of colors
-failure = "red"              # single color indicating failure
-success = "green"            # single color indicating success
+command = "cargo test"
+pending = ["blue", "white"]
+failure = "red"
+success = "green"
 ```
