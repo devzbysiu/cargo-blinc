@@ -34,9 +34,9 @@
 
 # <p id="about">About</p>
 
-This crate allows to run arbitrary command and indicate the status of its execution using USB notification light - [blink(1)](https://blink1.thingm.com/).
+This crate allows to run arbitrary commands and indicate the status of its execution using USB notification light - [blink(1)](https://blink1.thingm.com/).
 
-<p id="star">*By default it runs <code>cargo test</code>. You can customize the command and LED colors using <a href="#configuration">configuration file</a>.
+<p id="star">*By default it runs <code>cargo test</code>. You can customize the commands and LED colors using <a href="#configuration">configuration file</a>.
 
 ##### Example use case:
 
@@ -67,12 +67,15 @@ You can control all of these by configuration file.
 Run `cargo blinc --init` to initialize config. It will create **.blinc** file (note the dot) with following content:
 
 ```toml
-[task]
+[[tasks]]
+cmd = "cargo"
+args = ["check"]
+
+[[tasks]]
 cmd = "cargo"
 args = ["test"]
 
 [colors]
 pending = ["blue", "white"]
 failure = "red"
-success = "green"
 ```
