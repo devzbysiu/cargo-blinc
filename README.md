@@ -27,6 +27,10 @@
     <a href="#installation">Installation</a>
     <span> | </span>
     <a href="#configuration">Configuration</a>
+    <span> | </span>
+    <a href="#license">License</a>
+    <span> | </span>
+    <a href="#contribution">Contribution</a>
   </h3>
 
   <sub>Built with 🦀</sub>
@@ -80,3 +84,12 @@ pending = ["blue", "white"]
 failure = "red"
 success = "green"
 ```
+
+# <p id="license">License</p>
+
+## --- TODO ---
+
+# <p id="contribution">Contribution</p>
+
+## --- TODO ---
+
