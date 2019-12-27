@@ -39,22 +39,22 @@ fn parse_args<'a>() -> ArgMatches<'a> {
         .about("Blinks USB notifier light with different colors depending on command exit code")
         .arg(
             Arg::with_name("init")
-                .help("Initializes configuration file .blinc (note the dot)")
+                .help("Initializes configuration file named .blinc (note the dot)")
                 .short("i")
                 .long("init"),
         )
+        // this argument is only because of how cargo runs custom commands:
+        // cargo blinc --init == cargo-blinc blinc --init
         .arg(Arg::with_name("blinc"))
         .get_matches()
 }
 
 fn config() -> Result<Config, failure::Error> {
-    let config_path = Path::new(".blinc");
-    let config = if config_path.exists() {
-        Config::load()?
+    if Path::new(".blinc").exists() {
+        Ok(Config::load()?)
     } else {
-        Config::default()
-    };
-    Ok(config)
+        Ok(Config::default())
+    }
 }
 
 fn transition(config: &Config) -> Result<Transition, failure::Error> {
