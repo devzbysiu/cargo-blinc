@@ -14,12 +14,12 @@ pub(crate) struct Config {
 }
 
 impl Config {
-    pub(crate) fn init() -> Result<Config, failure::Error> {
-        Config::read_config(&mut File::open(".blinc")?)
+    pub(crate) fn load() -> Result<Config, failure::Error> {
+        Config::load_config(&mut File::open(".blinc")?)
     }
 
-    pub(crate) fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
-        Ok(init_config(read_config(read)?))
+    pub(crate) fn load_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
+        Ok(load_config(read_config(read)?))
     }
 
     pub(crate) fn command(&self) -> &str {
@@ -43,24 +43,13 @@ impl Config {
     }
 }
 
-fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
-    let mut config_contents = String::new();
-    read.read_to_string(&mut config_contents)?;
-    let c: Config = toml::from_str(&config_contents)?;
-    Ok(c)
-}
-
-fn init_config(config: Config) -> Config {
+fn load_config(config: Config) -> Config {
     let mut config = config;
     let command = config.command;
     let command_and_args = command.split(' ').collect::<Vec<&str>>();
     config.command = read_command_name(&command_and_args);
     config.args = read_args(&command_and_args);
     config
-}
-
-fn read_command_name(split_command: &Vec<&str>) -> String {
-    split_command.first().unwrap_or(&"echo").to_string()
 }
 
 fn read_args(split_command: &Vec<&str>) -> Option<Vec<String>> {
@@ -71,6 +60,29 @@ fn read_args(split_command: &Vec<&str>) -> Option<Vec<String>> {
             .map(|s| s.to_string())
             .collect(),
     )
+}
+
+fn read_command_name(split_command: &Vec<&str>) -> String {
+    split_command.first().unwrap_or(&"echo").to_string()
+}
+
+fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
+    let mut config_contents = String::new();
+    read.read_to_string(&mut config_contents)?;
+    let c: Config = toml::from_str(&config_contents)?;
+    Ok(c)
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Config {
+            command: "cargo".to_string(),
+            pending: "blue white".to_string(),
+            args: Some(vec!["test".to_string()]),
+            failure: "red".to_string(),
+            success: "green".to_string(),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -88,7 +100,7 @@ mod test {
         "#
         .to_string();
 
-        let c = Config::read_config(&mut ReaderMock::new(config_contents))?;
+        let c = Config::load_config(&mut ReaderMock::new(config_contents))?;
 
         assert_eq!(c.pending(), "blue white", "Testing transition");
         assert_eq!(c.command(), "cargo", "Testing command");
@@ -107,7 +119,7 @@ mod test {
           success = "green"
         "#
         .to_string();
-        Config::read_config(&mut ReaderMock::new(config_contents)).unwrap();
+        Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
     }
 
     #[test]
@@ -119,7 +131,7 @@ mod test {
           success = "green"
         "#
         .to_string();
-        Config::read_config(&mut ReaderMock::new(config_contents)).unwrap();
+        Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
     }
 
     #[test]
@@ -131,7 +143,7 @@ mod test {
           success = "green"
         "#
         .to_string();
-        Config::read_config(&mut ReaderMock::new(config_contents)).unwrap();
+        Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
     }
 
     #[test]
@@ -143,7 +155,7 @@ mod test {
           failure = "red"
         "#
         .to_string();
-        Config::read_config(&mut ReaderMock::new(config_contents)).unwrap();
+        Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
     }
 
     struct ReaderMock {
