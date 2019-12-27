@@ -1,14 +1,16 @@
 use serde_derive::Deserialize;
+use serde_derive::Serialize;
 use std::fs::File;
+use std::fs::OpenOptions;
 use std::io::prelude::*;
 
 const COMMAND_NAME: usize = 1;
 
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub(crate) struct Config {
     command: String,
-    pending: Vec<String>,
     args: Option<Vec<String>>,
+    pending: Vec<String>,
     failure: String,
     success: String,
 }
@@ -20,6 +22,16 @@ impl Config {
 
     pub(crate) fn load_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
         Ok(load_config(read_config(read)?))
+    }
+
+    pub(crate) fn store(&self) -> Result<(), failure::Error> {
+        let default_config = Config::default();
+        let mut config_file = OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .open(".blinc")?;
+        config_file.write_all(toml::to_string(&default_config)?.as_bytes())?;
+        Ok(())
     }
 
     pub(crate) fn command(&self) -> &str {
@@ -76,9 +88,9 @@ fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            command: "cargo".to_string(),
+            command: "cargo test".to_string(),
             pending: vec!["blue".to_string(), "white".to_string()],
-            args: Some(vec!["test".to_string()]),
+            args: None,
             failure: "red".to_string(),
             success: "green".to_string(),
         }

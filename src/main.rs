@@ -1,5 +1,11 @@
+#[macro_use]
+extern crate clap;
+
+use clap::App;
+use clap::Arg;
 use config::Config;
 use std::path::Path;
+use std::process;
 use std::process::Command;
 use std::process::ExitStatus;
 use transition::Transition;
@@ -7,6 +13,22 @@ use transition::Transition;
 mod config;
 
 fn main() -> Result<(), failure::Error> {
+    let matches = App::new("blinc")
+        .version(crate_version!())
+        .author(crate_authors!())
+        .about("Blinks USB notifier light with different colors depending on command exit code")
+        .arg(
+            Arg::with_name("init")
+                .help("Initializes configuration file .blinc (note the dot)")
+                .short("i")
+                .long("init"),
+        )
+        .arg(Arg::with_name("blinc"))
+        .get_matches();
+    if matches.is_present("init") {
+        Config::default().store()?;
+        process::exit(0);
+    }
     let config = config()?;
     let tx = transition(&config)?.start()?;
     if run(config.command(), config.args())?.success() {
