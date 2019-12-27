@@ -141,7 +141,7 @@ mod test {
 
     #[test]
     #[should_panic]
-    fn test_command_config_with_lack_of_cmd_key() {
+    fn test_tasks_config_with_lack_of_cmd_key() {
         let config_content = r#"
             [[tasks]]
             args = ["check"]
@@ -160,7 +160,35 @@ mod test {
     }
 
     #[test]
-    fn test_command_config_with_lack_of_optional_args_key() -> Result<(), failure::Error> {
+    #[should_panic]
+    fn test_tasks_config_with_empty_tasks_key() {
+        let config_content = r#"
+            [[tasks]]
+
+            [colors]
+            pending = ["blue", "white"]
+            failure = "red"
+            success = "green"
+        "#
+        .to_string();
+        Config::read(&mut ReaderStub::new(config_content)).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_tasks_config_with_lack_of_tasks() {
+        let config_content = r#"
+            [colors]
+            pending = ["blue", "white"]
+            failure = "red"
+            success = "green"
+        "#
+        .to_string();
+        Config::read(&mut ReaderStub::new(config_content)).unwrap();
+    }
+
+    #[test]
+    fn test_tasks_config_with_lack_of_optional_args_key() -> Result<(), failure::Error> {
         let config_content = r#"
             [[tasks]]
             cmd = "cargo"
@@ -249,6 +277,22 @@ mod test {
             [colors]
             pending = ["blue", "white"]
             failure = "red"
+        "#
+        .to_string();
+        Config::read(&mut ReaderStub::new(config_content)).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_colors_config_with_lack_of_colors_key() {
+        let config_content = r#"
+            [[tasks]]
+            cmd = "cargo"
+            args = ["check"]
+
+            [[tasks]]
+            cmd = "cargo"
+            args = ["test"]
         "#
         .to_string();
         Config::read(&mut ReaderStub::new(config_content)).unwrap();
