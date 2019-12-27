@@ -17,8 +17,7 @@ mod config;
 mod testutils;
 
 fn main() -> Result<(), failure::Error> {
-    let args = parse_args();
-    if args.is_present("init") {
+    if parse_args().is_present("init") {
         Config::default().store()?;
         process::exit(0);
     }
