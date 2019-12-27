@@ -7,7 +7,7 @@ mod config;
 
 fn main() -> Result<(), failure::Error> {
     let config = Config::init()?;
-    let tx = Transition::from(config.transition())
+    let tx = Transition::from(config.pending())
         .on_success(config.success())
         .on_failure(config.failure())
         .run()?;

@@ -9,7 +9,7 @@
   </p>
 
   <p>
-    <a href="https://crates.io/crates/cargo-blinc"><img src="https://img.shields.io/crates/v/cargo-blinkest" alt="Crates.io version" /></a>
+    <a href="https://crates.io/crates/cargo-blinc"><img src="https://img.shields.io/crates/v/cargo-blinc" alt="Crates.io version" /></a>
     <a href="https://codecov.io/gh/devzbysiu/cargo-blinc">
   <img src="https://codecov.io/gh/devzbysiu/cargo-blinc/branch/master/graph/badge.svg?token=ELme4pPy8K" />
 </a>
