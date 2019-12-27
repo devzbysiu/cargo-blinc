@@ -10,9 +10,7 @@ const COMMAND_NAME: usize = 1;
 pub(crate) struct Config {
     command: String,
     args: Option<Vec<String>>,
-    pending: Vec<String>,
-    failure: String,
-    success: String,
+    colors: Colors,
 }
 
 impl Config {
@@ -39,7 +37,7 @@ impl Config {
     }
 
     pub(crate) fn pending(&self) -> &Vec<String> {
-        &self.pending
+        &self.colors.pending
     }
 
     pub(crate) fn args(&self) -> Vec<String> {
@@ -47,11 +45,11 @@ impl Config {
     }
 
     pub(crate) fn failure(&self) -> &str {
-        &self.failure
+        &self.colors.failure
     }
 
     pub(crate) fn success(&self) -> &str {
-        &self.success
+        &self.colors.success
     }
 }
 
@@ -89,12 +87,21 @@ impl Default for Config {
     fn default() -> Self {
         Config {
             command: "cargo test".to_string(),
-            pending: vec!["blue".to_string(), "white".to_string()],
             args: None,
-            failure: "red".to_string(),
-            success: "green".to_string(),
+            colors: Colors {
+                pending: vec!["blue".to_string(), "white".to_string()],
+                failure: "red".to_string(),
+                success: "green".to_string(),
+            },
         }
     }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Colors {
+    pending: Vec<String>,
+    failure: String,
+    success: String,
 }
 
 #[cfg(test)]
@@ -106,6 +113,8 @@ mod test {
     fn test_config_with_valid_config() -> Result<(), failure::Error> {
         let config_contents = r#"
           command = "cargo test"
+
+          [colors]
           pending = ["blue", "white"]
           failure = "red"
           success = "green"
@@ -125,9 +134,11 @@ mod test {
 
     #[test]
     #[should_panic]
-    fn test_config_with_lack_of_transition_key() {
+    fn test_config_with_lack_of_pending_key() {
         let config_contents = r#"
           command = "cargo test"
+
+          [colors]
           failure = "red"
           success = "green"
         "#
@@ -140,6 +151,8 @@ mod test {
     fn test_config_with_lack_of_command_key() {
         let config_contents = r#"
           pending = ["blue", "white"]
+
+          [colors]
           failure = "red"
           success = "green"
         "#
@@ -152,6 +165,8 @@ mod test {
     fn test_config_with_lack_of_failure_key() {
         let config_contents = r#"
           command = "cargo test"
+
+          [colors]
           pending = ["blue", "white"]
           success = "green"
         "#
@@ -164,6 +179,8 @@ mod test {
     fn test_config_with_lack_of_success_key() {
         let config_contents = r#"
           command = "cargo test"
+
+          [colors]
           pending = ["blue", "white"]
           failure = "red"
         "#
