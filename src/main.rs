@@ -3,6 +3,7 @@ extern crate clap;
 
 use clap::App;
 use clap::Arg;
+use clap::ArgMatches;
 use config::Config;
 use std::path::Path;
 use std::process;
@@ -13,19 +14,8 @@ use transition::Transition;
 mod config;
 
 fn main() -> Result<(), failure::Error> {
-    let matches = App::new("blinc")
-        .version(crate_version!())
-        .author(crate_authors!())
-        .about("Blinks USB notifier light with different colors depending on command exit code")
-        .arg(
-            Arg::with_name("init")
-                .help("Initializes configuration file .blinc (note the dot)")
-                .short("i")
-                .long("init"),
-        )
-        .arg(Arg::with_name("blinc"))
-        .get_matches();
-    if matches.is_present("init") {
+    let args = parse_args();
+    if args.is_present("init") {
         Config::default().store()?;
         process::exit(0);
     }
@@ -37,6 +27,21 @@ fn main() -> Result<(), failure::Error> {
         tx.notify_failure()?;
     }
     Ok(())
+}
+
+fn parse_args<'a>() -> ArgMatches<'a> {
+    App::new("blinc")
+        .version(crate_version!())
+        .author(crate_authors!())
+        .about("Blinks USB notifier light with different colors depending on command exit code")
+        .arg(
+            Arg::with_name("init")
+                .help("Initializes configuration file .blinc (note the dot)")
+                .short("i")
+                .long("init"),
+        )
+        .arg(Arg::with_name("blinc"))
+        .get_matches()
 }
 
 fn config() -> Result<Config, failure::Error> {
