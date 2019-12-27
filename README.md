@@ -57,7 +57,7 @@ Run `cargo install cargo-blinc`
 # <p id="configuration">Configuration</p>
 
 By default no configuration is required if these settings satisfy you:
-- command: `cargo test`
+- task command: `cargo test`
 - pending task color: **blue** (blinking)
 - failed task color: **red**
 - successful task color: **green**
@@ -67,7 +67,7 @@ You can control all of these by configuration file.
 Run `cargo blinc --init` to initialize config. It will create **.blinc** file (note the dot) with following content:
 
 ```toml
-[command]
+[task]
 cmd = "cargo"
 args = ["test"]
 

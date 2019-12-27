@@ -11,11 +11,11 @@ pub(crate) struct Config {
 }
 
 impl Config {
-    pub(crate) fn load() -> Result<Config, failure::Error> {
-        Config::read(&mut File::open(".blinc")?)
+    pub(crate) fn load() -> Result<Self, failure::Error> {
+        Self::read(&mut File::open(".blinc")?)
     }
 
-    pub(crate) fn read<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
+    pub(crate) fn read<R: Read>(read: &mut R) -> Result<Self, failure::Error> {
         Ok(read_config(read)?)
     }
 
@@ -24,12 +24,12 @@ impl Config {
             .write(true)
             .truncate(true)
             .open(".blinc")?;
-        Config::write(&mut config_file, &Config::default())?;
+        self.write(&mut config_file)?;
         Ok(())
     }
 
-    pub(crate) fn write<W: Write>(write: &mut W, config: &Config) -> Result<(), failure::Error> {
-        write.write_all(toml::to_string(&config)?.as_bytes())?;
+    pub(crate) fn write<W: Write>(&self, write: &mut W) -> Result<(), failure::Error> {
+        write.write_all(toml::to_string(&self)?.as_bytes())?;
         Ok(())
     }
 
@@ -63,7 +63,7 @@ fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
 
 impl Default for Config {
     fn default() -> Self {
-        Config {
+        Self {
             task: Task {
                 cmd: "cargo".to_string(),
                 args: Some(vec!["test".to_string()]),
@@ -223,7 +223,7 @@ success = "green"
         .to_string();
 
         let mut writer = WriterMock::new(&config_content);
-        Config::write(&mut writer, &Config::default())?;
+        Config::default().write(&mut writer)?;
 
         assert_eq!(true, writer.all_config_written(), "Testing writing config");
 

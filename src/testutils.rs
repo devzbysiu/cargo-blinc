@@ -6,8 +6,8 @@ pub(crate) struct ReaderStub {
 }
 
 impl ReaderStub {
-    pub(crate) fn new(contents: String) -> ReaderStub {
-        ReaderStub { contents }
+    pub(crate) fn new(contents: String) -> Self {
+        Self { contents }
     }
 }
 
@@ -29,7 +29,7 @@ pub(crate) struct WriterMock {
 
 impl WriterMock {
     pub(crate) fn new<I: Into<String>>(expected_content: I) -> Self {
-        WriterMock {
+        Self {
             wrote_content: "".to_string(),
             expected_content: expected_content.into(),
         }
