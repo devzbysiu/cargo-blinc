@@ -40,7 +40,7 @@ This crate allows to run arbitrary command and indicate the status of its execut
 
 ##### Example use case:
 
-- run `cargo watch blinc`
+- run `cargo watch -x blinc`
 - after every file change, it will start blinking with blue light as long as tests are running
 - after tests finish it will glow red when tests fail or green when tests succeed
 </p>
@@ -72,7 +72,7 @@ By default no configuration is required if these settings satisfy you:
 
 You can control all of these by configuration file.
 
-Run `cargo blinc --init` to initialize config. It will create **.blink** file (note the dot) with following content:
+Run `cargo blinc --init` to initialize config. It will create **.blinc** file (note the dot) with following content:
 
 ```toml
 command = "cargo test"

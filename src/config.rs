@@ -15,7 +15,7 @@ pub(crate) struct Config {
 
 impl Config {
     pub(crate) fn init() -> Result<Config, failure::Error> {
-        Config::read_config(&mut File::open(".blink")?)
+        Config::read_config(&mut File::open(".blinc")?)
     }
 
     pub(crate) fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
