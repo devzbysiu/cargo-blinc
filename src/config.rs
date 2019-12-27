@@ -12,20 +12,24 @@ pub(crate) struct Config {
 
 impl Config {
     pub(crate) fn load() -> Result<Config, failure::Error> {
-        Config::load_config(&mut File::open(".blinc")?)
+        Config::read(&mut File::open(".blinc")?)
     }
 
-    pub(crate) fn load_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
+    pub(crate) fn read<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
         Ok(read_config(read)?)
     }
 
     pub(crate) fn store(&self) -> Result<(), failure::Error> {
-        let default_config = Config::default();
         let mut config_file = OpenOptions::new()
             .write(true)
             .truncate(true)
             .open(".blinc")?;
-        config_file.write_all(toml::to_string(&default_config)?.as_bytes())?;
+        Config::write(&mut config_file, &Config::default())?;
+        Ok(())
+    }
+
+    pub(crate) fn write<W: Write>(write: &mut W, config: &Config) -> Result<(), failure::Error> {
+        write.write_all(toml::to_string(&config)?.as_bytes())?;
         Ok(())
     }
 
@@ -51,9 +55,9 @@ impl Config {
 }
 
 fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
-    let mut config_contents = String::new();
-    read.read_to_string(&mut config_contents)?;
-    let c: Config = toml::from_str(&config_contents)?;
+    let mut config_content = String::new();
+    read.read_to_string(&mut config_content)?;
+    let c: Config = toml::from_str(&config_content)?;
     Ok(c)
 }
 
@@ -93,7 +97,7 @@ mod test {
 
     #[test]
     fn test_load_config_with_valid_config() -> Result<(), failure::Error> {
-        let config_contents = r#"
+        let config_content = r#"
             [command]
             cmd = "cargo"
             args = ["test"]
@@ -105,7 +109,7 @@ mod test {
         "#
         .to_string();
 
-        let c = Config::load_config(&mut ReaderMock::new(config_contents))?;
+        let c = Config::read(&mut ReaderStub::new(config_content))?;
 
         assert_eq!(c.pending()[0], "blue", "Testing transition");
         assert_eq!(c.pending()[1], "white", "Testing transition");
@@ -120,7 +124,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_command_config_with_lack_of_cmd_key() {
-        let config_contents = r#"
+        let config_content = r#"
             [command]
             args = ["test"]
 
@@ -130,12 +134,12 @@ mod test {
             success = "green"
         "#
         .to_string();
-        Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
+        Config::read(&mut ReaderStub::new(config_content)).unwrap();
     }
 
     #[test]
     fn test_command_config_with_lack_of_optional_args_key() -> Result<(), failure::Error> {
-        let config_contents = r#"
+        let config_content = r#"
             [command]
             cmd = "cargo"
 
@@ -145,7 +149,7 @@ mod test {
             success = "green"
         "#
         .to_string();
-        let c = Config::load_config(&mut ReaderMock::new(config_contents))?;
+        let c = Config::read(&mut ReaderStub::new(config_content))?;
 
         assert_eq!(c.pending()[0], "blue", "Testing transition");
         assert_eq!(c.pending()[1], "white", "Testing transition");
@@ -160,7 +164,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_colors_config_with_lack_of_pending_key() {
-        let config_contents = r#"
+        let config_content = r#"
             [command]
             cmd = "cargo"
             args = ["test"]
@@ -170,13 +174,13 @@ mod test {
             success = "green"
         "#
         .to_string();
-        Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
+        Config::read(&mut ReaderStub::new(config_content)).unwrap();
     }
 
     #[test]
     #[should_panic]
     fn test_colors_config_with_lack_of_failure_key() {
-        let config_contents = r#"
+        let config_content = r#"
             [command]
             cmd = "cargo"
             args = ["test"]
@@ -186,13 +190,13 @@ mod test {
             success = "green"
         "#
         .to_string();
-        Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
+        Config::read(&mut ReaderStub::new(config_content)).unwrap();
     }
 
     #[test]
     #[should_panic]
     fn test_colors_config_with_lack_of_success_key() {
-        let config_contents = r#"
+        let config_content = r#"
             [command]
             cmd = "cargo"
             args = ["test"]
@@ -202,20 +206,41 @@ mod test {
             failure = "red"
         "#
         .to_string();
-        Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
+        Config::read(&mut ReaderStub::new(config_content)).unwrap();
     }
 
-    struct ReaderMock {
+    #[test]
+    fn test_store_config() -> Result<(), failure::Error> {
+        let config_content = r#"[command]
+cmd = "cargo"
+args = ["test"]
+
+[colors]
+pending = ["blue", "white"]
+failure = "red"
+success = "green"
+"#
+        .to_string();
+
+        let mut writer = WriterMock::new(&config_content);
+        Config::write(&mut writer, &Config::default())?;
+
+        assert_eq!(true, writer.all_config_written(), "Testing writing config");
+
+        Ok(())
+    }
+
+    struct ReaderStub {
         contents: String,
     }
 
-    impl ReaderMock {
-        fn new(contents: String) -> ReaderMock {
-            ReaderMock { contents }
+    impl ReaderStub {
+        fn new(contents: String) -> ReaderStub {
+            ReaderStub { contents }
         }
     }
 
-    impl Read for ReaderMock {
+    impl Read for ReaderStub {
         fn read(&mut self, _buf: &mut [u8]) -> io::Result<usize> {
             Ok(1)
         }
@@ -223,6 +248,39 @@ mod test {
         fn read_to_string(&mut self, buf: &mut String) -> io::Result<usize> {
             self.contents.as_bytes().read_to_string(buf)?;
             Ok(buf.len())
+        }
+    }
+
+    struct WriterMock {
+        wrote_content: String,
+        expected_content: String,
+    }
+
+    impl WriterMock {
+        fn new<I: Into<String>>(expected_content: I) -> Self {
+            WriterMock {
+                wrote_content: "".to_string(),
+                expected_content: expected_content.into(),
+            }
+        }
+
+        fn all_config_written(&self) -> bool {
+            self.wrote_content == self.expected_content
+        }
+    }
+
+    impl Write for WriterMock {
+        fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+            Ok(1)
+        }
+
+        fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
+            self.wrote_content = String::from_utf8(buf.to_vec()).unwrap();
+            Ok(())
+        }
+
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
         }
     }
 }
