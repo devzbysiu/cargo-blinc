@@ -78,4 +78,5 @@ args = ["test"]
 [colors]
 pending = ["blue", "white"]
 failure = "red"
+success = "green"
 ```
