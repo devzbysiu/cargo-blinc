@@ -48,16 +48,9 @@ This crate allows to run arbitrary command and indicate the status of its execut
 
 # <p id="demo">Demo</p>
 
-<p>test</p>
-<p>test</p>
-<p>test</p>
-<p>test</p>
-<p>test</p>
-<p>test</p>
-<p>test</p>
-<p>test</p>
-<p>test</p>
-<p>test</p>
+<h1>
+  <blink><marquee>--- TODO ---</marquee></blink>
+</h1>
 
 # <p id="installation">Installation</p>
 Run `cargo install cargo-blinc`
@@ -75,8 +68,8 @@ You can control all of these by configuration file.
 Run `cargo blinc --init` to initialize config. It will create **.blinc** file (note the dot) with following content:
 
 ```toml
-command = "cargo test"
-pending = "blue white"
-failure = "red"
-success = "green"
+command = "cargo test"       # command with arguments
+pending = ["blue", "white"]  # transition of colors
+failure = "red"              # single color indicating failure
+success = "green"            # single color indicating success
 ```

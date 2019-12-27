@@ -7,7 +7,7 @@ const COMMAND_NAME: usize = 1;
 #[derive(Deserialize, Debug)]
 pub(crate) struct Config {
     command: String,
-    pending: String,
+    pending: Vec<String>,
     args: Option<Vec<String>>,
     failure: String,
     success: String,
@@ -26,7 +26,7 @@ impl Config {
         &self.command
     }
 
-    pub(crate) fn pending(&self) -> &str {
+    pub(crate) fn pending(&self) -> &Vec<String> {
         &self.pending
     }
 
@@ -77,7 +77,7 @@ impl Default for Config {
     fn default() -> Self {
         Config {
             command: "cargo".to_string(),
-            pending: "blue white".to_string(),
+            pending: vec!["blue".to_string(), "white".to_string()],
             args: Some(vec!["test".to_string()]),
             failure: "red".to_string(),
             success: "green".to_string(),
@@ -94,7 +94,7 @@ mod test {
     fn test_config_with_valid_config() -> Result<(), failure::Error> {
         let config_contents = r#"
           command = "cargo test"
-          pending = "blue white"
+          pending = ["blue", "white"]
           failure = "red"
           success = "green"
         "#
@@ -102,7 +102,8 @@ mod test {
 
         let c = Config::load_config(&mut ReaderMock::new(config_contents))?;
 
-        assert_eq!(c.pending(), "blue white", "Testing transition");
+        assert_eq!(c.pending()[0], "blue", "Testing transition");
+        assert_eq!(c.pending()[1], "white", "Testing transition");
         assert_eq!(c.command(), "cargo", "Testing command");
         assert_eq!(c.args(), vec!["test"], "Testing command arguments");
         assert_eq!(c.failure(), "red", "Testing failure color");
@@ -126,7 +127,7 @@ mod test {
     #[should_panic]
     fn test_config_with_lack_of_command_key() {
         let config_contents = r#"
-          pending = "blue white"
+          pending = ["blue", "white"]
           failure = "red"
           success = "green"
         "#
@@ -139,7 +140,7 @@ mod test {
     fn test_config_with_lack_of_failure_key() {
         let config_contents = r#"
           command = "cargo test"
-          pending = "blue white"
+          pending = ["blue", "white"]
           success = "green"
         "#
         .to_string();
@@ -151,7 +152,7 @@ mod test {
     fn test_config_with_lack_of_success_key() {
         let config_contents = r#"
           command = "cargo test"
-          pending = "blue white"
+          pending = ["blue", "white"]
           failure = "red"
         "#
         .to_string();

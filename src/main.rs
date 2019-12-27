@@ -8,7 +8,7 @@ mod config;
 
 fn main() -> Result<(), failure::Error> {
     let config = config()?;
-    let tx = transition(&config)?.run()?;
+    let tx = transition(&config)?.start()?;
     if run(config.command(), config.args())?.success() {
         tx.notify_success()?;
     } else {
@@ -32,6 +32,6 @@ fn transition(config: &Config) -> Result<Transition, failure::Error> {
         .on_failure(config.failure()))
 }
 
-fn run(cmd: &str, args: Vec<String>) -> Result<ExitStatus, failure::Error> {
-    Ok(Command::new(cmd).args(args).status()?)
+fn run<I: Into<String>>(cmd: I, args: Vec<String>) -> Result<ExitStatus, failure::Error> {
+    Ok(Command::new(cmd.into()).args(args).status()?)
 }
