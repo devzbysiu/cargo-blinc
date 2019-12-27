@@ -6,8 +6,8 @@ const COMMAND_NAME: usize = 1;
 
 #[derive(Deserialize, Debug)]
 pub(crate) struct Config {
-    pending: String,
     command: String,
+    pending: String,
     args: Option<Vec<String>>,
     failure: String,
     success: String,
@@ -22,12 +22,12 @@ impl Config {
         Ok(init_config(read_config(read)?))
     }
 
-    pub(crate) fn pending(&self) -> &str {
-        &self.pending
-    }
-
     pub(crate) fn command(&self) -> &str {
         &self.command
+    }
+
+    pub(crate) fn pending(&self) -> &str {
+        &self.pending
     }
 
     pub(crate) fn args(&self) -> Vec<String> {
@@ -81,8 +81,8 @@ mod test {
     #[test]
     fn test_config_with_valid_config() -> Result<(), failure::Error> {
         let config_contents = r#"
-          pending = "blue white"
           command = "cargo test"
+          pending = "blue white"
           failure = "red"
           success = "green"
         "#
@@ -126,8 +126,8 @@ mod test {
     #[should_panic]
     fn test_config_with_lack_of_failure_key() {
         let config_contents = r#"
-          pending = "blue white"
           command = "cargo test"
+          pending = "blue white"
           success = "green"
         "#
         .to_string();
@@ -138,8 +138,8 @@ mod test {
     #[should_panic]
     fn test_config_with_lack_of_success_key() {
         let config_contents = r#"
-          pending = "blue white"
           command = "cargo test"
+          pending = "blue white"
           failure = "red"
         "#
         .to_string();
