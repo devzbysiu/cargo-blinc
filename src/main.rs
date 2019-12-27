@@ -23,11 +23,12 @@ fn main() -> Result<(), failure::Error> {
     }
     let config = config()?;
     let tx = transition(&config)?.start()?;
-    if run(config.command(), config.args())?.success() {
-        tx.notify_success()?;
-    } else {
-        tx.notify_failure()?;
+    for task in config.tasks() {
+        if !run(task.command(), task.args())?.success() {
+            tx.notify_failure()?;
+        }
     }
+    tx.notify_success()?;
     Ok(())
 }
 

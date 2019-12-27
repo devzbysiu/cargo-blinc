@@ -6,7 +6,7 @@ use std::io::prelude::*;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub(crate) struct Config {
-    task: Task,
+    tasks: Vec<Task>,
     colors: Colors,
 }
 
@@ -33,12 +33,8 @@ impl Config {
         Ok(())
     }
 
-    pub(crate) fn command(&self) -> &str {
-        &self.task.cmd
-    }
-
-    pub(crate) fn args(&self) -> Vec<String> {
-        self.task.args.clone().unwrap_or_else(|| vec![])
+    pub(crate) fn tasks(&self) -> &Vec<Task> {
+        &self.tasks
     }
 
     pub(crate) fn pending(&self) -> &Vec<String> {
@@ -64,10 +60,10 @@ fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            task: Task {
+            tasks: vec![Task {
                 cmd: "cargo".to_string(),
                 args: Some(vec!["test".to_string()]),
-            },
+            }],
             colors: Colors {
                 pending: vec!["blue".to_string(), "white".to_string()],
                 failure: "red".to_string(),
@@ -84,10 +80,20 @@ struct Colors {
     success: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Task {
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct Task {
     cmd: String,
     args: Option<Vec<String>>,
+}
+
+impl Task {
+    pub(crate) fn command(&self) -> &str {
+        &self.cmd
+    }
+
+    pub(crate) fn args(&self) -> Vec<String> {
+        self.args.clone().unwrap_or_else(|| vec![])
+    }
 }
 
 #[cfg(test)]
@@ -98,7 +104,11 @@ mod test {
     #[test]
     fn test_load_config_with_valid_config() -> Result<(), failure::Error> {
         let config_content = r#"
-            [task]
+            [[tasks]]
+            cmd = "cargo"
+            args = ["check"]
+
+            [[tasks]]
             cmd = "cargo"
             args = ["test"]
 
@@ -113,8 +123,16 @@ mod test {
 
         assert_eq!(c.pending()[0], "blue", "Testing transition");
         assert_eq!(c.pending()[1], "white", "Testing transition");
-        assert_eq!(c.command(), "cargo", "Testing command");
-        assert_eq!(c.args(), vec!["test"], "Testing command arguments");
+        assert_eq!(
+            c.tasks().first().unwrap().command(),
+            "cargo",
+            "Testing command"
+        );
+        assert_eq!(
+            c.tasks().first().unwrap().args(),
+            vec!["check"],
+            "Testing command arguments"
+        );
         assert_eq!(c.failure(), "red", "Testing failure color");
         assert_eq!(c.success(), "green", "Testing success color");
 
@@ -125,7 +143,11 @@ mod test {
     #[should_panic]
     fn test_command_config_with_lack_of_cmd_key() {
         let config_content = r#"
-            [task]
+            [[tasks]]
+            args = ["check"]
+
+            [[tasks]]
+            cmd = "cargo"
             args = ["test"]
 
             [colors]
@@ -140,7 +162,10 @@ mod test {
     #[test]
     fn test_command_config_with_lack_of_optional_args_key() -> Result<(), failure::Error> {
         let config_content = r#"
-            [task]
+            [[tasks]]
+            cmd = "cargo"
+
+            [[tasks]]
             cmd = "cargo"
 
             [colors]
@@ -153,8 +178,16 @@ mod test {
 
         assert_eq!(c.pending()[0], "blue", "Testing transition");
         assert_eq!(c.pending()[1], "white", "Testing transition");
-        assert_eq!(c.command(), "cargo", "Testing command");
-        assert_eq!(c.args(), Vec::<String>::new(), "Testing command arguments");
+        assert_eq!(
+            c.tasks().first().unwrap().command(),
+            "cargo",
+            "Testing command"
+        );
+        assert_eq!(
+            c.tasks().first().unwrap().args(),
+            Vec::<String>::new(),
+            "Testing command arguments"
+        );
         assert_eq!(c.failure(), "red", "Testing failure color");
         assert_eq!(c.success(), "green", "Testing success color");
 
@@ -165,7 +198,11 @@ mod test {
     #[should_panic]
     fn test_colors_config_with_lack_of_pending_key() {
         let config_content = r#"
-            [task]
+            [[tasks]]
+            cmd = "cargo"
+            args = ["check"]
+
+            [[tasks]]
             cmd = "cargo"
             args = ["test"]
 
@@ -181,7 +218,11 @@ mod test {
     #[should_panic]
     fn test_colors_config_with_lack_of_failure_key() {
         let config_content = r#"
-            [task]
+            [[tasks]]
+            cmd = "cargo"
+            args = ["check"]
+
+            [[tasks]]
             cmd = "cargo"
             args = ["test"]
 
@@ -197,7 +238,11 @@ mod test {
     #[should_panic]
     fn test_colors_config_with_lack_of_success_key() {
         let config_content = r#"
-            [task]
+            [[tasks]]
+            cmd = "cargo"
+            args = ["check"]
+
+            [[tasks]]
             cmd = "cargo"
             args = ["test"]
 
@@ -211,7 +256,7 @@ mod test {
 
     #[test]
     fn test_store_config() -> Result<(), failure::Error> {
-        let config_content = r#"[task]
+        let config_content = r#"[[tasks]]
 cmd = "cargo"
 args = ["test"]
 

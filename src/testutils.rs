@@ -23,20 +23,20 @@ impl Read for ReaderStub {
 }
 
 pub(crate) struct WriterMock {
-    wrote_content: String,
+    written_content: String,
     expected_content: String,
 }
 
 impl WriterMock {
     pub(crate) fn new<I: Into<String>>(expected_content: I) -> Self {
         Self {
-            wrote_content: "".to_string(),
+            written_content: "".to_string(),
             expected_content: expected_content.into(),
         }
     }
 
     pub(crate) fn all_config_written(&self) -> bool {
-        self.wrote_content == self.expected_content
+        self.written_content == self.expected_content
     }
 }
 
@@ -46,7 +46,7 @@ impl Write for WriterMock {
     }
 
     fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
-        self.wrote_content = String::from_utf8(buf.to_vec()).unwrap();
+        self.written_content = String::from_utf8(buf.to_vec()).unwrap();
         Ok(())
     }
 
