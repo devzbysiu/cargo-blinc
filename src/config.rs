@@ -6,7 +6,7 @@ use std::io::prelude::*;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub(crate) struct Config {
-    command: Command,
+    task: Task,
     colors: Colors,
 }
 
@@ -34,11 +34,11 @@ impl Config {
     }
 
     pub(crate) fn command(&self) -> &str {
-        &self.command.cmd
+        &self.task.cmd
     }
 
     pub(crate) fn args(&self) -> Vec<String> {
-        self.command.args.clone().unwrap_or_else(|| vec![])
+        self.task.args.clone().unwrap_or_else(|| vec![])
     }
 
     pub(crate) fn pending(&self) -> &Vec<String> {
@@ -64,7 +64,7 @@ fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            command: Command {
+            task: Task {
                 cmd: "cargo".to_string(),
                 args: Some(vec!["test".to_string()]),
             },
@@ -85,7 +85,7 @@ struct Colors {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct Command {
+struct Task {
     cmd: String,
     args: Option<Vec<String>>,
 }
@@ -98,7 +98,7 @@ mod test {
     #[test]
     fn test_load_config_with_valid_config() -> Result<(), failure::Error> {
         let config_content = r#"
-            [command]
+            [task]
             cmd = "cargo"
             args = ["test"]
 
@@ -125,7 +125,7 @@ mod test {
     #[should_panic]
     fn test_command_config_with_lack_of_cmd_key() {
         let config_content = r#"
-            [command]
+            [task]
             args = ["test"]
 
             [colors]
@@ -140,7 +140,7 @@ mod test {
     #[test]
     fn test_command_config_with_lack_of_optional_args_key() -> Result<(), failure::Error> {
         let config_content = r#"
-            [command]
+            [task]
             cmd = "cargo"
 
             [colors]
@@ -165,7 +165,7 @@ mod test {
     #[should_panic]
     fn test_colors_config_with_lack_of_pending_key() {
         let config_content = r#"
-            [command]
+            [task]
             cmd = "cargo"
             args = ["test"]
 
@@ -181,7 +181,7 @@ mod test {
     #[should_panic]
     fn test_colors_config_with_lack_of_failure_key() {
         let config_content = r#"
-            [command]
+            [task]
             cmd = "cargo"
             args = ["test"]
 
@@ -197,7 +197,7 @@ mod test {
     #[should_panic]
     fn test_colors_config_with_lack_of_success_key() {
         let config_content = r#"
-            [command]
+            [task]
             cmd = "cargo"
             args = ["test"]
 
@@ -211,7 +211,7 @@ mod test {
 
     #[test]
     fn test_store_config() -> Result<(), failure::Error> {
-        let config_content = r#"[command]
+        let config_content = r#"[task]
 cmd = "cargo"
 args = ["test"]
 
