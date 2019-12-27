@@ -13,6 +13,9 @@ use transition::Transition;
 
 mod config;
 
+#[cfg(test)]
+mod testutils;
+
 fn main() -> Result<(), failure::Error> {
     let args = parse_args();
     if args.is_present("init") {
@@ -46,10 +49,11 @@ fn parse_args<'a>() -> ArgMatches<'a> {
 
 fn config() -> Result<Config, failure::Error> {
     let config_path = Path::new(".blinc");
-    let mut config = Config::default();
-    if config_path.exists() {
-        config = Config::load()?;
-    }
+    let config = if config_path.exists() {
+        Config::load()?
+    } else {
+        Config::default()
+    };
     Ok(config)
 }
 

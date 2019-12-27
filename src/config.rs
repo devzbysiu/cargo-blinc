@@ -38,7 +38,7 @@ impl Config {
     }
 
     pub(crate) fn args(&self) -> Vec<String> {
-        self.command.args.clone().unwrap_or(vec![])
+        self.command.args.clone().unwrap_or_else(|| vec![])
     }
 
     pub(crate) fn pending(&self) -> &Vec<String> {
@@ -93,7 +93,7 @@ struct Command {
 #[cfg(test)]
 mod test {
     use super::*;
-    use std::io;
+    use crate::testutils::*;
 
     #[test]
     fn test_load_config_with_valid_config() -> Result<(), failure::Error> {
@@ -228,59 +228,5 @@ success = "green"
         assert_eq!(true, writer.all_config_written(), "Testing writing config");
 
         Ok(())
-    }
-
-    struct ReaderStub {
-        contents: String,
-    }
-
-    impl ReaderStub {
-        fn new(contents: String) -> ReaderStub {
-            ReaderStub { contents }
-        }
-    }
-
-    impl Read for ReaderStub {
-        fn read(&mut self, _buf: &mut [u8]) -> io::Result<usize> {
-            Ok(1)
-        }
-
-        fn read_to_string(&mut self, buf: &mut String) -> io::Result<usize> {
-            self.contents.as_bytes().read_to_string(buf)?;
-            Ok(buf.len())
-        }
-    }
-
-    struct WriterMock {
-        wrote_content: String,
-        expected_content: String,
-    }
-
-    impl WriterMock {
-        fn new<I: Into<String>>(expected_content: I) -> Self {
-            WriterMock {
-                wrote_content: "".to_string(),
-                expected_content: expected_content.into(),
-            }
-        }
-
-        fn all_config_written(&self) -> bool {
-            self.wrote_content == self.expected_content
-        }
-    }
-
-    impl Write for WriterMock {
-        fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-            Ok(1)
-        }
-
-        fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
-            self.wrote_content = String::from_utf8(buf.to_vec()).unwrap();
-            Ok(())
-        }
-
-        fn flush(&mut self) -> io::Result<()> {
-            Ok(())
-        }
     }
 }
