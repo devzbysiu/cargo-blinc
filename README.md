@@ -48,9 +48,7 @@ This crate allows to run arbitrary command and indicate the status of its execut
 
 # <p id="demo">Demo</p>
 
-<h1>
-  <blink><marquee>--- TODO ---</marquee></blink>
-</h1>
+## --- TODO ---
 
 # <p id="installation">Installation</p>
 Run `cargo install cargo-blinc`
@@ -59,9 +57,9 @@ Run `cargo install cargo-blinc`
 
 By default no configuration is required if these settings satisfy you:
 - command: `cargo test`
-- pending command color: <font color="blue">**blue**</font> (blinking)
-- failed task color: <font color="red">**red**</font>
-- successful task color: <font color="green">**green**</font>
+- pending command color: **blue** (blinking)
+- failed task color: **red**
+- successful task color: **green**
 
 You can control all of these by configuration file.
 
