@@ -113,6 +113,7 @@ mod test {
         assert_eq!(c.args(), vec!["test"], "Testing command arguments");
         assert_eq!(c.failure(), "red", "Testing failure color");
         assert_eq!(c.success(), "green", "Testing success color");
+
         Ok(())
     }
 
@@ -133,7 +134,7 @@ mod test {
     }
 
     #[test]
-    fn test_command_config_with_lack_of_optional_args_key() {
+    fn test_command_config_with_lack_of_optional_args_key() -> Result<(), failure::Error> {
         let config_contents = r#"
             [command]
             cmd = "cargo"
@@ -144,7 +145,16 @@ mod test {
             success = "green"
         "#
         .to_string();
-        Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
+        let c = Config::load_config(&mut ReaderMock::new(config_contents))?;
+
+        assert_eq!(c.pending()[0], "blue", "Testing transition");
+        assert_eq!(c.pending()[1], "white", "Testing transition");
+        assert_eq!(c.command(), "cargo", "Testing command");
+        assert_eq!(c.args(), Vec::<String>::new(), "Testing command arguments");
+        assert_eq!(c.failure(), "red", "Testing failure color");
+        assert_eq!(c.success(), "green", "Testing success color");
+
+        Ok(())
     }
 
     #[test]
