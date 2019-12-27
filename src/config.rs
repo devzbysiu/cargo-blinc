@@ -4,12 +4,9 @@ use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 
-const COMMAND_NAME: usize = 1;
-
 #[derive(Serialize, Deserialize, Debug)]
 pub(crate) struct Config {
-    command: String,
-    args: Option<Vec<String>>,
+    command: Command,
     colors: Colors,
 }
 
@@ -19,7 +16,7 @@ impl Config {
     }
 
     pub(crate) fn load_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
-        Ok(load_config(read_config(read)?))
+        Ok(read_config(read)?)
     }
 
     pub(crate) fn store(&self) -> Result<(), failure::Error> {
@@ -33,15 +30,15 @@ impl Config {
     }
 
     pub(crate) fn command(&self) -> &str {
-        &self.command
+        &self.command.cmd
+    }
+
+    pub(crate) fn args(&self) -> Vec<String> {
+        self.command.args.clone().unwrap_or(vec![])
     }
 
     pub(crate) fn pending(&self) -> &Vec<String> {
         &self.colors.pending
-    }
-
-    pub(crate) fn args(&self) -> Vec<String> {
-        self.args.clone().unwrap_or(vec![])
     }
 
     pub(crate) fn failure(&self) -> &str {
@@ -51,29 +48,6 @@ impl Config {
     pub(crate) fn success(&self) -> &str {
         &self.colors.success
     }
-}
-
-fn load_config(config: Config) -> Config {
-    let mut config = config;
-    let command = config.command;
-    let command_and_args = command.split(' ').collect::<Vec<&str>>();
-    config.command = read_command_name(&command_and_args);
-    config.args = read_args(&command_and_args);
-    config
-}
-
-fn read_args(split_command: &Vec<&str>) -> Option<Vec<String>> {
-    Some(
-        split_command
-            .iter()
-            .skip(COMMAND_NAME)
-            .map(|s| s.to_string())
-            .collect(),
-    )
-}
-
-fn read_command_name(split_command: &Vec<&str>) -> String {
-    split_command.first().unwrap_or(&"echo").to_string()
 }
 
 fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
@@ -86,8 +60,10 @@ fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            command: "cargo test".to_string(),
-            args: None,
+            command: Command {
+                cmd: "cargo".to_string(),
+                args: Some(vec!["test".to_string()]),
+            },
             colors: Colors {
                 pending: vec!["blue".to_string(), "white".to_string()],
                 failure: "red".to_string(),
@@ -104,20 +80,28 @@ struct Colors {
     success: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+struct Command {
+    cmd: String,
+    args: Option<Vec<String>>,
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
     use std::io;
 
     #[test]
-    fn test_config_with_valid_config() -> Result<(), failure::Error> {
+    fn test_load_config_with_valid_config() -> Result<(), failure::Error> {
         let config_contents = r#"
-          command = "cargo test"
+            [command]
+            cmd = "cargo"
+            args = ["test"]
 
-          [colors]
-          pending = ["blue", "white"]
-          failure = "red"
-          success = "green"
+            [colors]
+            pending = ["blue", "white"]
+            failure = "red"
+            success = "green"
         "#
         .to_string();
 
@@ -134,13 +118,30 @@ mod test {
 
     #[test]
     #[should_panic]
-    fn test_config_with_lack_of_pending_key() {
+    fn test_command_config_with_lack_of_cmd_key() {
         let config_contents = r#"
-          command = "cargo test"
+            [command]
+            args = ["test"]
 
-          [colors]
-          failure = "red"
-          success = "green"
+            [colors]
+            pending = ["blue", "white"]
+            failure = "red"
+            success = "green"
+        "#
+        .to_string();
+        Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
+    }
+
+    #[test]
+    fn test_command_config_with_lack_of_optional_args_key() {
+        let config_contents = r#"
+            [command]
+            cmd = "cargo"
+
+            [colors]
+            pending = ["blue", "white"]
+            failure = "red"
+            success = "green"
         "#
         .to_string();
         Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
@@ -148,13 +149,15 @@ mod test {
 
     #[test]
     #[should_panic]
-    fn test_config_with_lack_of_command_key() {
+    fn test_colors_config_with_lack_of_pending_key() {
         let config_contents = r#"
-          pending = ["blue", "white"]
+            [command]
+            cmd = "cargo"
+            args = ["test"]
 
-          [colors]
-          failure = "red"
-          success = "green"
+            [colors]
+            failure = "red"
+            success = "green"
         "#
         .to_string();
         Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
@@ -162,13 +165,15 @@ mod test {
 
     #[test]
     #[should_panic]
-    fn test_config_with_lack_of_failure_key() {
+    fn test_colors_config_with_lack_of_failure_key() {
         let config_contents = r#"
-          command = "cargo test"
+            [command]
+            cmd = "cargo"
+            args = ["test"]
 
-          [colors]
-          pending = ["blue", "white"]
-          success = "green"
+            [colors]
+            pending = ["blue", "white"]
+            success = "green"
         "#
         .to_string();
         Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
@@ -176,13 +181,15 @@ mod test {
 
     #[test]
     #[should_panic]
-    fn test_config_with_lack_of_success_key() {
+    fn test_colors_config_with_lack_of_success_key() {
         let config_contents = r#"
-          command = "cargo test"
+            [command]
+            cmd = "cargo"
+            args = ["test"]
 
-          [colors]
-          pending = ["blue", "white"]
-          failure = "red"
+            [colors]
+            pending = ["blue", "white"]
+            failure = "red"
         "#
         .to_string();
         Config::load_config(&mut ReaderMock::new(config_contents)).unwrap();
