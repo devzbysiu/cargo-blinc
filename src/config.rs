@@ -4,6 +4,8 @@ use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 
+const CONFIG_FILE: &str = ".blinc";
+
 #[derive(Serialize, Deserialize, Debug)]
 pub(crate) struct Config {
     tasks: Vec<Task>,
@@ -12,7 +14,7 @@ pub(crate) struct Config {
 
 impl Config {
     pub(crate) fn load() -> Result<Self, failure::Error> {
-        Self::read(&mut File::open(".blinc")?)
+        Self::read(&mut File::open(CONFIG_FILE)?)
     }
 
     pub(crate) fn read<R: Read>(read: &mut R) -> Result<Self, failure::Error> {
@@ -23,7 +25,7 @@ impl Config {
         let mut config_file = OpenOptions::new()
             .write(true)
             .truncate(true)
-            .open(".blinc")?;
+            .open(CONFIG_FILE)?;
         self.write(&mut config_file)?;
         Ok(())
     }
@@ -53,8 +55,7 @@ impl Config {
 fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
     let mut config_content = String::new();
     read.read_to_string(&mut config_content)?;
-    let c: Config = toml::from_str(&config_content)?;
-    Ok(c)
+    Ok(toml::from_str(&config_content)?)
 }
 
 impl Default for Config {
@@ -78,9 +79,8 @@ struct Colors {
 
 impl Colors {
     pub(crate) fn new(pending: &[&str], failure: &str, success: &str) -> Self {
-        let pending = pending.iter().map(|&arg| arg.to_string()).collect();
         Self {
-            pending,
+            pending: pending.iter().map(|&arg| arg.to_string()).collect(),
             failure: failure.to_string(),
             success: success.to_string(),
         }
@@ -95,10 +95,9 @@ pub struct Task {
 
 impl Task {
     pub(crate) fn new(cmd: &str, args: &[&str]) -> Self {
-        let args = args.iter().map(|&arg| arg.to_string()).collect();
         Self {
             cmd: cmd.to_string(),
-            args: Some(args),
+            args: Some(args.iter().map(|&arg| arg.to_string()).collect()),
         }
     }
 
@@ -141,12 +140,12 @@ mod test {
         assert_eq!(
             c.tasks().first().unwrap().command(),
             "cargo",
-            "Testing command"
+            "Testing first task command"
         );
         assert_eq!(
             c.tasks().first().unwrap().args(),
             vec!["check"],
-            "Testing command arguments"
+            "Testing first task arguments"
         );
         assert_eq!(c.failure(), "red", "Testing failure color");
         assert_eq!(c.success(), "green", "Testing success color");
@@ -224,12 +223,12 @@ mod test {
         assert_eq!(
             c.tasks().first().unwrap().command(),
             "cargo",
-            "Testing command"
+            "Testing first task command"
         );
         assert_eq!(
             c.tasks().first().unwrap().args(),
             Vec::<String>::new(),
-            "Testing command arguments"
+            "Testing first task arguments"
         );
         assert_eq!(c.failure(), "red", "Testing failure color");
         assert_eq!(c.success(), "green", "Testing success color");
