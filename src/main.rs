@@ -21,7 +21,9 @@ mod testutils;
 
 fn main() -> Result<(), failure::Error> {
     env_logger::init();
-    if parse_args().is_present("init") {
+    let arguments = parse_args();
+    debug!("arguments: {:?}", arguments);
+    if arguments.is_present("init") {
         debug!("init argument passed, initializing config");
         Config::default().store()?;
         process::exit(0);
@@ -53,7 +55,7 @@ fn parse_args<'a>() -> ArgMatches<'a> {
         )
         // this argument is only because of how cargo runs custom commands:
         // cargo blinc --init == cargo-blinc blinc --init
-        .arg(Arg::with_name("blinc"))
+        .arg(Arg::with_name("blinc").long("dontuse"))
         .get_matches()
 }
 
