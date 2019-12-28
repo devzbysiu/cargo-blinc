@@ -22,6 +22,7 @@ impl Config {
     }
 
     pub(crate) fn store(&self) -> Result<(), failure::Error> {
+        debug!("storing config: {:?}", self);
         let mut config_file = OpenOptions::new()
             .write(true)
             .truncate(true)
@@ -32,6 +33,7 @@ impl Config {
 
     pub(crate) fn write<W: Write>(&self, write: &mut W) -> Result<(), failure::Error> {
         write.write_all(toml::to_string(&self)?.as_bytes())?;
+        debug!("config written");
         Ok(())
     }
 
@@ -55,7 +57,10 @@ impl Config {
 fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
     let mut config_content = String::new();
     read.read_to_string(&mut config_content)?;
-    Ok(toml::from_str(&config_content)?)
+    debug!("read config {}", config_content);
+    let config = toml::from_str(&config_content)?;
+    debug!("created config struct: {:?}", config);
+    Ok(config)
 }
 
 impl Default for Config {
