@@ -26,6 +26,7 @@ fn main() -> Result<(), failure::Error> {
     for task in config.tasks() {
         if !run(task.command(), task.args())?.success() {
             tx.notify_failure()?;
+            process::exit(1);
         }
     }
     tx.notify_success()?;
