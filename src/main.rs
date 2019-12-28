@@ -1,6 +1,9 @@
 #[macro_use]
 extern crate clap;
 
+#[macro_use]
+extern crate log;
+
 use clap::App;
 use clap::Arg;
 use clap::ArgMatches;
@@ -17,15 +20,21 @@ mod config;
 mod testutils;
 
 fn main() -> Result<(), failure::Error> {
-    if parse_args().is_present("init") {
+    env_logger::init();
+    let arguments = parse_args();
+    debug!("arguments: {:?}", arguments);
+    if arguments.is_present("init") {
+        debug!("init argument passed, initializing config");
         Config::default().store()?;
         process::exit(0);
     }
     let config = config()?;
     let tx = transition(&config)?.start()?;
     for task in config.tasks() {
+        debug!("executing {:?}", task);
         if !run(task.command(), task.args())?.success() {
             tx.notify_failure()?;
+            debug!("task failed, exiting");
             process::exit(1);
         }
     }
@@ -46,14 +55,16 @@ fn parse_args<'a>() -> ArgMatches<'a> {
         )
         // this argument is only because of how cargo runs custom commands:
         // cargo blinc --init == cargo-blinc blinc --init
-        .arg(Arg::with_name("blinc"))
+        .arg(Arg::with_name("notused"))
         .get_matches()
 }
 
 fn config() -> Result<Config, failure::Error> {
     if Path::new(".blinc").exists() {
+        debug!("config file exists, loading");
         Ok(Config::load()?)
     } else {
+        debug!("no config file, using default configuration");
         Ok(Config::default())
     }
 }
