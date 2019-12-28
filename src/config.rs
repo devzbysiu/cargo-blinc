@@ -60,10 +60,16 @@ fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            tasks: vec![Task {
-                cmd: "cargo".to_string(),
-                args: Some(vec!["test".to_string()]),
-            }],
+            tasks: vec![
+                Task {
+                    cmd: "cargo".to_string(),
+                    args: Some(vec!["check".to_string()]),
+                },
+                Task {
+                    cmd: "cargo".to_string(),
+                    args: Some(vec!["test".to_string()]),
+                },
+            ],
             colors: Colors {
                 pending: vec!["blue".to_string(), "white".to_string()],
                 failure: "red".to_string(),
@@ -301,6 +307,10 @@ mod test {
     #[test]
     fn test_store_config() -> Result<(), failure::Error> {
         let config_content = r#"[[tasks]]
+cmd = "cargo"
+args = ["check"]
+
+[[tasks]]
 cmd = "cargo"
 args = ["test"]
 
