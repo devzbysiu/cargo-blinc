@@ -61,14 +61,8 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             tasks: vec![
-                Task {
-                    cmd: "cargo".to_string(),
-                    args: Some(vec!["check".to_string()]),
-                },
-                Task {
-                    cmd: "cargo".to_string(),
-                    args: Some(vec!["test".to_string()]),
-                },
+                Task::new("cargo", &["check"]),
+                Task::new("cargo", &["test"]),
             ],
             colors: Colors {
                 pending: vec!["blue".to_string(), "white".to_string()],
@@ -93,6 +87,14 @@ pub struct Task {
 }
 
 impl Task {
+    pub(crate) fn new(cmd: &str, args: &[&str]) -> Self {
+        let args = args.iter().map(|&arg| arg.to_string()).collect();
+        Self {
+            cmd: cmd.to_string(),
+            args: Some(args),
+        }
+    }
+
     pub(crate) fn command(&self) -> &str {
         &self.cmd
     }
