@@ -64,11 +64,7 @@ impl Default for Config {
                 Task::new("cargo", &["check"]),
                 Task::new("cargo", &["test"]),
             ],
-            colors: Colors {
-                pending: vec!["blue".to_string(), "white".to_string()],
-                failure: "red".to_string(),
-                success: "green".to_string(),
-            },
+            colors: Colors::new(&["blue", "white"], "red", "green"),
         }
     }
 }
@@ -78,6 +74,17 @@ struct Colors {
     pending: Vec<String>,
     failure: String,
     success: String,
+}
+
+impl Colors {
+    pub(crate) fn new(pending: &[&str], failure: &str, success: &str) -> Self {
+        let pending = pending.iter().map(|&arg| arg.to_string()).collect();
+        Self {
+            pending,
+            failure: failure.to_string(),
+            success: success.to_string(),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
