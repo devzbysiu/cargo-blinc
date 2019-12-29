@@ -16,10 +16,6 @@ mod testutils;
 fn main() -> Result<(), failure::Error> {
     env_logger::init();
     let arguments = parse_args();
-    let arguments = arguments
-        .subcommand_matches("blinc")
-        .expect("blinc subcommand should be present");
-    debug!("arguments: {:?}", arguments);
     if arguments.is_present("init") {
         debug!("init argument passed, initializing config");
         Config::default().store()?;
@@ -40,7 +36,7 @@ fn main() -> Result<(), failure::Error> {
 }
 
 fn parse_args<'a>() -> ArgMatches<'a> {
-    App::new("blinc")
+    let arguments = App::new("blinc")
         .version(crate_version!())
         .author(crate_authors!())
         .about("Blinks USB notifier light with different colors depending on command exit code")
@@ -58,7 +54,12 @@ fn parse_args<'a>() -> ArgMatches<'a> {
                     .long("init"),
             ),
         )
-        .get_matches()
+        .get_matches();
+    let arguments = arguments
+        .subcommand_matches("blinc")
+        .expect("blinc subcommand should be present");
+    debug!("arguments: {:?}", arguments);
+    arguments.clone()
 }
 
 fn transition(config: &Config) -> Result<Transition, failure::Error> {
