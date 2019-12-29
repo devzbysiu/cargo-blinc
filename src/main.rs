@@ -53,7 +53,11 @@ fn parse_args<'a>() -> ArgMatches<'a> {
         // this subcommand is only because of how cargo runs custom commands:
         // cargo blinc --init == cargo-blinc blinc --init
         .subcommand(
-            App::new("blinc").arg(
+            App::new("blinc")
+            .version(crate_version!())
+            .author(crate_authors!())
+            .about("Blinks USB notifier light with different colors depending on command exit code")
+            .arg(
                 Arg::with_name("init")
                     .help("Initializes configuration file named .blinc (note the dot)")
                     .short("i")

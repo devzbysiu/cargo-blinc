@@ -11,7 +11,15 @@ use std::process::Command;
 
 #[test]
 #[serial]
-fn test_help_message() {}
+fn test_help_message() {
+    let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
+    cmd.arg("blinc");
+    cmd.arg("--help");
+
+    cmd.assert().success().stdout(contains(
+        "-i, --init       Initializes configuration file named .blinc (note the dot)",
+    ));
+}
 
 #[test]
 #[serial]
