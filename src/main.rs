@@ -1,17 +1,11 @@
-#[macro_use]
-extern crate clap;
-
-#[macro_use]
-extern crate log;
-
+use clap::crate_authors;
+use clap::crate_version;
 use clap::App;
 use clap::Arg;
 use clap::ArgMatches;
 use config::Config;
-use std::path::Path;
+use log::debug;
 use std::process;
-use std::process::Command;
-use std::process::ExitStatus;
 use transition::Transition;
 
 mod config;
@@ -31,11 +25,11 @@ fn main() -> Result<(), failure::Error> {
         Config::default().store()?;
         process::exit(0);
     }
-    let config = config()?;
+    let config = Config::get()?;
     let tx = transition(&config)?.start()?;
     for task in config.tasks() {
         debug!("executing {:?}", task);
-        if !run(task.command(), task.args())?.success() {
+        if !task.run()?.success() {
             tx.notify_failure()?;
             debug!("task failed, exiting");
             process::exit(1);
@@ -67,22 +61,8 @@ fn parse_args<'a>() -> ArgMatches<'a> {
         .get_matches()
 }
 
-fn config() -> Result<Config, failure::Error> {
-    if Path::new(".blinc").exists() {
-        debug!("config file exists, loading");
-        Ok(Config::load()?)
-    } else {
-        debug!("no config file, using default configuration");
-        Ok(Config::default())
-    }
-}
-
 fn transition(config: &Config) -> Result<Transition, failure::Error> {
     Ok(Transition::from(config.pending())
         .on_success(config.success())
         .on_failure(config.failure()))
-}
-
-fn run<I: Into<String>>(cmd: I, args: Vec<String>) -> Result<ExitStatus, failure::Error> {
-    Ok(Command::new(cmd.into()).args(args).status()?)
 }

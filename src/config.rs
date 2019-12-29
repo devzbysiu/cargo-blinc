@@ -1,11 +1,15 @@
+use log::debug;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
+use std::path::Path;
+use std::process::Command;
+use std::process::ExitStatus;
 
-const CONFIG_FILE: &str = ".blinc";
+const FILE_NAME: &str = ".blinc";
 
 #[derive(Serialize, Deserialize, Debug)]
 pub(crate) struct Config {
@@ -14,11 +18,21 @@ pub(crate) struct Config {
 }
 
 impl Config {
-    pub(crate) fn load() -> Result<Self, failure::Error> {
-        Self::read(&mut File::open(CONFIG_FILE)?)
+    pub(crate) fn get() -> Result<Self, failure::Error> {
+        if Path::new(".blinc").exists() {
+            debug!("config file exists, loading");
+            Ok(Self::load()?)
+        } else {
+            debug!("no config file, using default configuration");
+            Ok(Self::default())
+        }
     }
 
-    pub(crate) fn read<R: Read>(read: &mut R) -> Result<Self, failure::Error> {
+    fn load() -> Result<Self, failure::Error> {
+        Self::read(&mut File::open(FILE_NAME)?)
+    }
+
+    fn read<R: Read>(read: &mut R) -> Result<Self, failure::Error> {
         Ok(read_config(read)?)
     }
 
@@ -32,12 +46,12 @@ impl Config {
             .write(true)
             .truncate(true)
             .create(true)
-            .open(CONFIG_FILE)?;
+            .open(FILE_NAME)?;
         self.write(&mut config_file)?;
         Ok(())
     }
 
-    pub(crate) fn write<W: Write>(&self, write: &mut W) -> Result<(), failure::Error> {
+    fn write<W: Write>(&self, write: &mut W) -> Result<(), failure::Error> {
         write.write_all(toml::to_string(&self)?.as_bytes())?;
         debug!("config written");
         Ok(())
@@ -115,6 +129,10 @@ impl Task {
 
     pub(crate) fn args(&self) -> Vec<String> {
         self.args.clone().unwrap_or_else(|| vec![])
+    }
+
+    pub(crate) fn run(&self) -> Result<ExitStatus, failure::Error> {
+        Ok(Command::new(self.command()).args(self.args()).status()?)
     }
 }
 
