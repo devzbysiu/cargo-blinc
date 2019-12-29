@@ -22,6 +22,9 @@ mod testutils;
 fn main() -> Result<(), failure::Error> {
     env_logger::init();
     let arguments = parse_args();
+    let arguments = arguments
+        .subcommand_matches("blinc")
+        .expect("blinc subcommand should be present");
     debug!("arguments: {:?}", arguments);
     if arguments.is_present("init") {
         debug!("init argument passed, initializing config");
@@ -47,15 +50,16 @@ fn parse_args<'a>() -> ArgMatches<'a> {
         .version(crate_version!())
         .author(crate_authors!())
         .about("Blinks USB notifier light with different colors depending on command exit code")
-        .arg(
-            Arg::with_name("init")
-                .help("Initializes configuration file named .blinc (note the dot)")
-                .short("i")
-                .long("init"),
-        )
         // this argument is only because of how cargo runs custom commands:
         // cargo blinc --init == cargo-blinc blinc --init
-        .arg(Arg::with_name("notused"))
+        .subcommand(
+            App::new("blinc").arg(
+                Arg::with_name("init")
+                    .help("Initializes configuration file named .blinc (note the dot)")
+                    .short("i")
+                    .long("init"),
+            ),
+        )
         .get_matches()
 }
 
