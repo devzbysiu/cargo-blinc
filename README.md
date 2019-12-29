@@ -56,12 +56,21 @@ This crate allows to run arbitrary commands and indicate the status of its execu
 ## --- TODO ---
 
 # <p id="installation">Installation</p>
-Run `cargo install cargo-blinc`
+
+To install
+```
+cargo install cargo-blinc
+```
+
+To upgrade
+```
+cargo install --force cargo-blinc
+```
 
 # <p id="configuration">Configuration</p>
 
 By default no configuration is required if these settings satisfy you:
-- task command: `cargo test`
+- tasks: `cargo check`, `cargo test`
 - pending task color: **blue** (blinking)
 - failed task color: **red**
 - successful task color: **green**
