@@ -9,6 +9,7 @@ use std::process;
 use transition::Transition;
 
 mod config;
+mod task;
 
 #[cfg(test)]
 mod testutils;
