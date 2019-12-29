@@ -1,8 +1,6 @@
-#[macro_use]
-extern crate serial_test;
-
 use assert_cmd::prelude::*;
 use predicates::str::contains;
+use serial_test::serial;
 use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -69,6 +67,10 @@ fn test_config_init() {
 cmd = "cargo"
 args = ["check"]
 
+[[tasks]]
+cmd = "cargo"
+args = ["test"]
+
 [colors]
 pending = ["blue", "white"]
 failure = "red"
@@ -96,6 +98,10 @@ fn test_config_init_when_file_already_exists() {
         r#"[[tasks]]
 cmd = "cargo"
 args = ["check"]
+
+[[tasks]]
+cmd = "cargo"
+args = ["test"]
 
 [colors]
 pending = ["blue", "white"]
