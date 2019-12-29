@@ -1,5 +1,6 @@
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
+use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
@@ -22,10 +23,15 @@ impl Config {
     }
 
     pub(crate) fn store(&self) -> Result<(), failure::Error> {
-        debug!("storing config: {:?}", self);
+        debug!(
+            "storing config: {:?} under path {:?}",
+            self,
+            env::current_dir()?
+        );
         let mut config_file = OpenOptions::new()
             .write(true)
             .truncate(true)
+            .create(true)
             .open(CONFIG_FILE)?;
         self.write(&mut config_file)?;
         Ok(())
