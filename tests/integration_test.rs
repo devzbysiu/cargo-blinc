@@ -16,22 +16,18 @@ fn test_help_message() {}
 #[test]
 #[serial]
 fn test_command_without_arguments() {
-    let config_content = r#"[[tasks]]
-cmd = "cargo"
-args = ["check"]
+    create_config(
+        r#"
+        [[tasks]]
+        cmd = "cargo"
+        args = ["check"]
 
-[colors]
-pending = ["blue", "white"]
-failure = "red"
-success = "green"
-"#;
-    let mut file = OpenOptions::new()
-        .write(true)
-        .truncate(true)
-        .create(true)
-        .open(".blinc")
-        .unwrap();
-    file.write_all(config_content.as_bytes());
+        [colors]
+        pending = ["blue", "white"]
+        failure = "red"
+        success = "green"
+        "#,
+    );
 
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
     cmd.arg("blinc");
@@ -59,12 +55,8 @@ fn test_config_init() {
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
     cmd.arg("blinc").arg("--init").assert().success();
 
-    let mut config_content = String::new();
-    File::open(".blinc")
-        .and_then(|mut file| file.read_to_string(&mut config_content))
-        .unwrap();
     assert_eq!(
-        config_content,
+        read_config(),
         r#"[[tasks]]
 cmd = "cargo"
 args = ["check"]
@@ -81,23 +73,18 @@ success = "green"
 #[test]
 #[serial]
 fn test_config_init_when_file_already_exists() {
-    let config_content = r#"[[tasks]]
-cmd = "cargo"
-args = ["check"]
-"#;
-    File::create(".blinc")
-        .and_then(|mut file| file.write_all(config_content.as_bytes()))
-        .unwrap();
-
+    create_config(
+        r#"
+        [[tasks]]
+        cmd = "cargo"
+        args = ["check"]
+        "#,
+    );
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
     cmd.arg("blinc").arg("--init").assert().success();
 
-    let mut config_content = String::new();
-    File::open(".blinc")
-        .and_then(|mut file| file.read_to_string(&mut config_content))
-        .unwrap();
     assert_eq!(
-        config_content,
+        read_config(),
         r#"[[tasks]]
 cmd = "cargo"
 args = ["check"]
@@ -110,4 +97,24 @@ success = "green"
     );
 
     fs::remove_file(".blinc").unwrap();
+}
+
+fn create_config<I: Into<String>>(config_content: I) {
+    let config_content = config_content.into();
+    let config_content: String = config_content.replace("\t", "");
+    let mut file = OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .create(true)
+        .open(".blinc")
+        .unwrap();
+    file.write_all(config_content.as_bytes()).unwrap();
+}
+
+fn read_config() -> String {
+    let mut config_content = String::new();
+    File::open(".blinc")
+        .and_then(|mut file| file.read_to_string(&mut config_content))
+        .unwrap();
+    config_content
 }
