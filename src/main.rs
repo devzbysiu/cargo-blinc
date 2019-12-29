@@ -50,7 +50,7 @@ fn parse_args<'a>() -> ArgMatches<'a> {
         .version(crate_version!())
         .author(crate_authors!())
         .about("Blinks USB notifier light with different colors depending on command exit code")
-        // this argument is only because of how cargo runs custom commands:
+        // this subcommand is only because of how cargo runs custom commands:
         // cargo blinc --init == cargo-blinc blinc --init
         .subcommand(
             App::new("blinc").arg(
