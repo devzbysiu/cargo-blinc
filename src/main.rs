@@ -8,6 +8,7 @@ use log::debug;
 use std::process;
 use transition::Transition;
 
+mod colors;
 mod config;
 mod task;
 

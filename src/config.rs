@@ -1,3 +1,4 @@
+use crate::colors::Colors;
 use crate::task::Task;
 use log::debug;
 use serde_derive::Deserialize;
@@ -61,15 +62,15 @@ impl Config {
     }
 
     pub(crate) fn pending(&self) -> &Vec<String> {
-        &self.colors.pending
+        self.colors.pending()
     }
 
     pub(crate) fn failure(&self) -> &str {
-        &self.colors.failure
+        self.colors.failure()
     }
 
     pub(crate) fn success(&self) -> &str {
-        &self.colors.success
+        self.colors.success()
     }
 }
 
@@ -87,23 +88,6 @@ impl Default for Config {
         Self {
             tasks: vec![Task::new("cargo", &["check"])],
             colors: Colors::new(&["blue", "white"], "red", "green"),
-        }
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct Colors {
-    pending: Vec<String>,
-    failure: String,
-    success: String,
-}
-
-impl Colors {
-    pub(crate) fn new(pending: &[&str], failure: &str, success: &str) -> Self {
-        Self {
-            pending: pending.iter().map(|&arg| arg.to_string()).collect(),
-            failure: failure.to_string(),
-            success: success.to_string(),
         }
     }
 }
