@@ -3,20 +3,22 @@
   <h1><code>cargo-blinc</code></h1>
 
   <p>
-    <strong>Instant feedback on the state of your tests<a href="#star">*<a/></strong>
-  </p>
-  <p>
+    <strong>Instant feedback on the state of your tests<a href="#star">*</a></strong>
   </p>
 
   <p>
-    <a href="https://crates.io/crates/cargo-blinc"><img src="https://img.shields.io/crates/v/cargo-blinc" alt="Crates.io version" /></a>
+    <a href="https://crates.io/crates/cargo-blinc">
+      <img src="https://img.shields.io/crates/v/cargo-blinc" alt="Crates.io version" />
+    </a>
     <a href="https://codecov.io/gh/devzbysiu/cargo-blinc">
-  <img src="https://codecov.io/gh/devzbysiu/cargo-blinc/branch/master/graph/badge.svg?token=ELme4pPy8K" />
-</a>
-<a href="https://crates.io/crates/cargo-blinc">
-  <img src="https://img.shields.io/crates/l/cargo-blinc" />
-</a>
-    <a href="https://docs.rs/cargo-blinc"><img src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square" alt="docs.rs docs" /></a>
+      <img src="https://codecov.io/gh/devzbysiu/cargo-blinc/branch/master/graph/badge.svg?token=ELme4pPy8K" />
+    </a>
+    <a href="https://crates.io/crates/cargo-blinc">
+      <img src="https://img.shields.io/crates/l/cargo-blinc" />
+    </a>
+    <a href="https://docs.rs/cargo-blinc">
+      <img src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square" alt="docs.rs docs" />
+    </a>
   </p>
 
   <h4>
