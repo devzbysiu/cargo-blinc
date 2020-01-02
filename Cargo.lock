@@ -102,7 +102,7 @@ dependencies = [
  "serde_derive 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)",
  "serial_test 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "toml 0.5.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "transition 0.2.0",
+ "transition 1.0.0",
 ]
 
 [[package]]
@@ -546,11 +546,12 @@ dependencies = [
 
 [[package]]
 name = "transition"
-version = "0.2.0"
+version = "1.0.0"
 dependencies = [
  "blinkrs 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "crossbeam-channel 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

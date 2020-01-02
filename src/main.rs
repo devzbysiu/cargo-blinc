@@ -65,7 +65,7 @@ fn parse_args<'a>() -> ArgMatches<'a> {
 }
 
 fn transition(config: &Config) -> Result<Transition, failure::Error> {
-    Ok(Transition::from(config.pending())
+    Ok(Transition::new(config.pending())
         .on_success(config.success())
         .on_failure(config.failure()))
 }
