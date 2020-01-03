@@ -8,16 +8,16 @@
 
   <p>
     <a href="https://crates.io/crates/cargo-blinc">
-      <img src="https://img.shields.io/crates/v/cargo-blinc" alt="Crates.io version" />
+      <img src="https://img.shields.io/crates/v/cargo-blinc?color=%2388C0D0&logoColor=%234C566A&style=flat-square" alt="Crates.io version" />
     </a>
     <a href="https://codecov.io/gh/devzbysiu/cargo-blinc">
-      <img src="https://codecov.io/gh/devzbysiu/cargo-blinc/branch/master/graph/badge.svg?token=ELme4pPy8K" />
+      <img src="https://img.shields.io/codecov/c/github/devzbysiu/cargo-blinc?color=%2388C0D0&logoColor=%234C566A&style=flat-square&token=bfdc4b9d55534910ae48fba0b8e984d0" alt="Code coverage"/>
     </a>
     <a href="https://crates.io/crates/cargo-blinc">
-      <img src="https://img.shields.io/crates/l/cargo-blinc" />
+      <img src="https://img.shields.io/crates/l/cargo-blinc?color=%2388C0D0&logoColor=%234C566A&style=flat-square" alt="License"/>
     </a>
     <a href="https://docs.rs/cargo-blinc">
-      <img src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square" alt="docs.rs docs" />
+      <img src="https://img.shields.io/badge/docs-latest-blue.svg?color=%2388C0D0&logoColor=%234C566A&style=flat-square" alt="docs.rs docs" />
     </a>
   </p>
 
