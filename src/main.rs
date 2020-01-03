@@ -1,3 +1,4 @@
+use anyhow::Result;
 use clap::crate_authors;
 use clap::crate_version;
 use clap::App;
@@ -7,7 +8,6 @@ use config::Config;
 use log::debug;
 use std::process;
 use transition::Transition;
-use anyhow::Result;
 
 mod colors;
 mod config;

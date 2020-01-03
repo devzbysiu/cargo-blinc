@@ -1,5 +1,6 @@
 use crate::colors::Colors;
 use crate::task::Task;
+use anyhow::Result;
 use log::debug;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
@@ -8,7 +9,6 @@ use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use std::path::Path;
-use anyhow::Result;
 
 const FILE_NAME: &str = ".blinc";
 
