@@ -7,6 +7,7 @@ use config::Config;
 use log::debug;
 use std::process;
 use transition::Transition;
+use anyhow::Result;
 
 mod colors;
 mod config;
@@ -15,7 +16,7 @@ mod task;
 #[cfg(test)]
 mod testutils;
 
-fn main() -> Result<(), failure::Error> {
+fn main() -> Result<()> {
     env_logger::init();
     let arguments = parse_args();
     if arguments.is_present("init") {
@@ -64,7 +65,7 @@ fn parse_args<'a>() -> ArgMatches<'a> {
     arguments.clone()
 }
 
-fn transition(config: &Config) -> Result<Transition, failure::Error> {
+fn transition(config: &Config) -> Result<Transition> {
     Ok(Transition::new(config.pending())
         .on_success(config.success())
         .on_failure(config.failure()))

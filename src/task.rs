@@ -1,3 +1,4 @@
+use anyhow::Result;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use std::process::Command;
@@ -25,7 +26,7 @@ impl Task {
         self.args.clone().unwrap_or_else(|| vec![])
     }
 
-    pub(crate) fn run(&self) -> Result<ExitStatus, failure::Error> {
+    pub(crate) fn run(&self) -> Result<ExitStatus> {
         Ok(Command::new(self.command()).args(self.args()).status()?)
     }
 }

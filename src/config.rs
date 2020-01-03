@@ -8,6 +8,7 @@ use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use std::path::Path;
+use anyhow::Result;
 
 const FILE_NAME: &str = ".blinc";
 
@@ -18,7 +19,7 @@ pub(crate) struct Config {
 }
 
 impl Config {
-    pub(crate) fn get() -> Result<Self, failure::Error> {
+    pub(crate) fn get() -> Result<Self> {
         if Path::new(".blinc").exists() {
             debug!("config file exists, loading");
             Ok(Self::load()?)
@@ -28,15 +29,15 @@ impl Config {
         }
     }
 
-    fn load() -> Result<Self, failure::Error> {
+    fn load() -> Result<Self> {
         Self::read(&mut File::open(FILE_NAME)?)
     }
 
-    fn read<R: Read>(read: &mut R) -> Result<Self, failure::Error> {
+    fn read<R: Read>(read: &mut R) -> Result<Self> {
         Ok(read_config(read)?)
     }
 
-    pub(crate) fn store(&self) -> Result<(), failure::Error> {
+    pub(crate) fn store(&self) -> Result<()> {
         debug!(
             "storing config: {:?} under path {:?}",
             self,
@@ -51,7 +52,7 @@ impl Config {
         Ok(())
     }
 
-    fn write<W: Write>(&self, write: &mut W) -> Result<(), failure::Error> {
+    fn write<W: Write>(&self, write: &mut W) -> Result<()> {
         write.write_all(toml::to_string(&self)?.as_bytes())?;
         debug!("config written");
         Ok(())
@@ -74,7 +75,7 @@ impl Config {
     }
 }
 
-fn read_config<R: Read>(read: &mut R) -> Result<Config, failure::Error> {
+fn read_config<R: Read>(read: &mut R) -> Result<Config> {
     let mut config_content = String::new();
     read.read_to_string(&mut config_content)?;
     debug!("read config {}", config_content);
@@ -101,7 +102,7 @@ mod test {
     use crate::testutils::*;
 
     #[test]
-    fn test_load_config_with_valid_config() -> Result<(), failure::Error> {
+    fn test_load_config_with_valid_config() -> Result<()> {
         let config_content = r#"
             [[tasks]]
             cmd = "cargo"
@@ -187,7 +188,7 @@ mod test {
     }
 
     #[test]
-    fn test_tasks_config_with_lack_of_optional_args_key() -> Result<(), failure::Error> {
+    fn test_tasks_config_with_lack_of_optional_args_key() -> Result<()> {
         let config_content = r#"
             [[tasks]]
             cmd = "cargo"
@@ -298,7 +299,7 @@ mod test {
     }
 
     #[test]
-    fn test_store_config() -> Result<(), failure::Error> {
+    fn test_store_config() -> Result<()> {
         let config_content = r#"[[tasks]]
 cmd = "cargo"
 args = ["check"]
