@@ -2,7 +2,7 @@
 name = "cargo-blinc"
 version = "0.4.1"
 authors = ["Bartosz Zbytniewski <bartosz.zbytniewski.dev@gmail.com>"]
-description = "Notifies about commands exit code using LED light"
+description = "Notifies about commands exit code using LED light blink(1)"
 keywords = ["blink(1)", "blink", "notify"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
