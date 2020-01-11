@@ -79,7 +79,7 @@ By default no configuration is required if these settings satisfy you:
 
 You can control all of these by configuration file.
 
-Run `cargo blinc --init` to initialize config. It will create **.blinc** file (note the dot) with following content:
+Run `cargo blinc --init <path>` to initialize config. It will create file, under specified path, with following content:
 
 ```toml
 [[tasks]]
