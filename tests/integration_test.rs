@@ -18,7 +18,7 @@ fn test_help_message() {
     cmd.assert()
         .success()
         .stdout(contains(
-            "-i, --init       Initializes configuration file named .blinc (note the dot)",
+            "-i, --init <init>        Initializes configuration file named .blinc (note the dot)",
         ))
         .stdout(contains(
             "-c, --config <config>    Points to configuration file [default: .blinc]",
@@ -92,7 +92,11 @@ fn test_command_with_specified_path_to_config() {
 #[serial]
 fn test_config_init() {
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
-    cmd.arg("blinc").arg("--init").assert().success();
+    cmd.arg("blinc")
+        .arg("--init")
+        .arg(".blinc")
+        .assert()
+        .success();
 
     assert_eq!(
         read_config(".blinc"),
@@ -125,7 +129,11 @@ fn test_config_init_when_file_already_exists() {
         ".blinc",
     );
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
-    cmd.arg("blinc").arg("--init").assert().success();
+    cmd.arg("blinc")
+        .arg("--init")
+        .arg(".blinc")
+        .assert()
+        .success();
 
     assert_eq!(
         read_config(".blinc"),
