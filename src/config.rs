@@ -19,18 +19,19 @@ pub(crate) struct Config {
 }
 
 impl Config {
-    pub(crate) fn get() -> Result<Self> {
-        if Path::new(".blinc").exists() {
-            debug!("config file exists, loading");
-            Ok(Self::load()?)
+    pub(crate) fn get<A: AsRef<Path>>(path: A) -> Result<Self> {
+        let path = path.as_ref();
+        if Path::new(path).exists() {
+            debug!("config file exists, loading from path {:?}", path);
+            Ok(Self::load(path)?)
         } else {
             debug!("no config file, using default configuration");
             Ok(Self::default())
         }
     }
 
-    fn load() -> Result<Self> {
-        Self::read(&mut File::open(FILE_NAME)?)
+    fn load<A: AsRef<Path>>(path: A) -> Result<Self> {
+        Self::read(&mut File::open(path.as_ref())?)
     }
 
     fn read<R: Read>(read: &mut R) -> Result<Self> {

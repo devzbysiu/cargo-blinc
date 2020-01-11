@@ -24,7 +24,11 @@ fn main() -> Result<()> {
         Config::default().store()?;
         process::exit(0);
     }
-    let config = Config::get()?;
+    let config = Config::get(
+        arguments
+            .value_of("config")
+            .expect("No config option passed"),
+    )?;
     let tx = transition(&config)?.start()?;
     for task in config.tasks() {
         debug!("executing {:?}", task);
@@ -55,6 +59,15 @@ fn parse_args<'a>() -> ArgMatches<'a> {
                     .help("Initializes configuration file named .blinc (note the dot)")
                     .short("i")
                     .long("init"),
+            )
+            .arg(
+                Arg::with_name("config")
+                    .help("Points to configuration file")
+                    .short("c")
+                    .long("config")
+                    .default_value(".blinc")
+                    .takes_value(true),
+
             ),
         )
         .get_matches();
