@@ -10,8 +10,6 @@ use std::fs::OpenOptions;
 use std::io::prelude::*;
 use std::path::Path;
 
-const FILE_NAME: &str = ".blinc";
-
 #[derive(Serialize, Deserialize, Debug)]
 pub(crate) struct Config {
     tasks: Vec<Task>,
@@ -38,17 +36,18 @@ impl Config {
         Ok(read_config(read)?)
     }
 
-    pub(crate) fn store(&self) -> Result<()> {
+    pub(crate) fn store<A: AsRef<Path>>(&self, path: A) -> Result<()> {
         debug!(
-            "storing config: {:?} under path {:?}",
+            "storing config: {:?} under path {:?} with name {:?}",
             self,
-            env::current_dir()?
+            env::current_dir()?,
+            path.as_ref()
         );
         let mut config_file = OpenOptions::new()
             .write(true)
             .truncate(true)
             .create(true)
-            .open(FILE_NAME)?;
+            .open(path)?;
         self.write(&mut config_file)?;
         Ok(())
     }

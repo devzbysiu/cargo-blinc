@@ -21,7 +21,11 @@ fn main() -> Result<()> {
     let arguments = parse_args();
     if arguments.is_present("init") {
         debug!("init argument passed, initializing config");
-        Config::default().store()?;
+        Config::default().store(
+            arguments
+                .value_of("init")
+                .expect("no path specified for init subcommand"),
+        )?;
         process::exit(0);
     }
     let config = Config::get(
@@ -58,16 +62,16 @@ fn parse_args<'a>() -> ArgMatches<'a> {
                 Arg::with_name("init")
                     .help("Initializes configuration file named .blinc (note the dot)")
                     .short("i")
-                    .long("init"),
+                    .long("init")
+                    .takes_value(true)
             )
             .arg(
                 Arg::with_name("config")
                     .help("Points to configuration file")
                     .short("c")
                     .long("config")
-                    .default_value(".blinc")
-                    .takes_value(true),
-
+                    .takes_value(true)
+                    .default_value(".blinc"),
             ),
         )
         .get_matches();
