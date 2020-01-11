@@ -5,6 +5,7 @@ use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
+use std::path::Path;
 use std::process::Command;
 
 #[test]
@@ -33,11 +34,11 @@ fn test_command_without_arguments() {
         failure = "red"
         success = "green"
         "#,
+        ".blinc",
     );
 
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
-    cmd.arg("blinc");
-    cmd.assert().success();
+    cmd.arg("blinc").assert().success();
 
     fs::remove_file(".blinc").unwrap();
 }
@@ -57,12 +58,39 @@ fn test_command_with_invalid_argument() {
 
 #[test]
 #[serial]
+fn test_command_with_specified_path_to_config() {
+    create_config(
+        r#"
+        [[tasks]]
+        cmd = "cargo"
+        args = ["check"]
+
+        [colors]
+        pending = ["blue", "white"]
+        failure = "red"
+        success = "green"
+        "#,
+        ".blinc-config",
+    );
+
+    let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
+    cmd.arg("blinc")
+        .arg("--config")
+        .arg(".blinc-config")
+        .assert()
+        .success();
+
+    fs::remove_file(".blinc-config").unwrap();
+}
+
+#[test]
+#[serial]
 fn test_config_init() {
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
     cmd.arg("blinc").arg("--init").assert().success();
 
     assert_eq!(
-        read_config(),
+        read_config(".blinc"),
         r#"[[tasks]]
 cmd = "cargo"
 args = ["check"]
@@ -89,12 +117,13 @@ fn test_config_init_when_file_already_exists() {
         cmd = "cargo"
         args = ["check"]
         "#,
+        ".blinc",
     );
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
     cmd.arg("blinc").arg("--init").assert().success();
 
     assert_eq!(
-        read_config(),
+        read_config(".blinc"),
         r#"[[tasks]]
 cmd = "cargo"
 args = ["check"]
@@ -113,21 +142,21 @@ success = "green"
     fs::remove_file(".blinc").unwrap();
 }
 
-fn create_config<I: Into<String>>(config_content: I) {
+fn create_config<I: Into<String>, A: AsRef<Path>>(config_content: I, path: A) {
     let config_content = config_content.into();
     let config_content: String = config_content.replace("\t", "");
     let mut file = OpenOptions::new()
         .write(true)
         .truncate(true)
         .create(true)
-        .open(".blinc")
+        .open(path.as_ref())
         .unwrap();
     file.write_all(config_content.as_bytes()).unwrap();
 }
 
-fn read_config() -> String {
+fn read_config<A: AsRef<Path>>(path: A) -> String {
     let mut config_content = String::new();
-    File::open(".blinc")
+    File::open(path.as_ref())
         .and_then(|mut file| file.read_to_string(&mut config_content))
         .unwrap();
     config_content
