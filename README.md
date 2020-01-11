@@ -96,6 +96,8 @@ failure = "red"
 success = "green"
 ```
 
+Run `cargo blinc --config <path>` to specify path to the configuration file. The default value is `.blinc`.
+
 # <p id="license">License</p>
 
 This project is licensed under either of
