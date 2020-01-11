@@ -15,9 +15,14 @@ fn test_help_message() {
     cmd.arg("blinc");
     cmd.arg("--help");
 
-    cmd.assert().success().stdout(contains(
-        "-i, --init       Initializes configuration file named .blinc (note the dot)",
-    ));
+    cmd.assert()
+        .success()
+        .stdout(contains(
+            "-i, --init       Initializes configuration file named .blinc (note the dot)",
+        ))
+        .stdout(contains(
+            "-c, --config <config>    Points to configuration file [default: .blinc]",
+        ));
 }
 
 #[test]
