@@ -110,6 +110,7 @@ mod test {
 
     #[test]
     fn test_load_config_with_valid_config() -> Result<()> {
+        init_logger();
         let config_content = r#"
             [[tasks]]
             cmd = "cargo"
@@ -149,6 +150,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_tasks_config_with_lack_of_cmd_key() {
+        init_logger();
         let config_content = r#"
             [[tasks]]
             args = ["check"]
@@ -169,6 +171,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_tasks_config_with_empty_tasks_key() {
+        init_logger();
         let config_content = r#"
             [[tasks]]
 
@@ -184,6 +187,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_tasks_config_with_lack_of_tasks() {
+        init_logger();
         let config_content = r#"
             [colors]
             pending = ["blue", "white"]
@@ -196,6 +200,7 @@ mod test {
 
     #[test]
     fn test_tasks_config_with_lack_of_optional_args_key() -> Result<()> {
+        init_logger();
         let config_content = r#"
             [[tasks]]
             cmd = "cargo"
@@ -232,6 +237,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_colors_config_with_lack_of_pending_key() {
+        init_logger();
         let config_content = r#"
             [[tasks]]
             cmd = "cargo"
@@ -252,6 +258,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_colors_config_with_lack_of_failure_key() {
+        init_logger();
         let config_content = r#"
             [[tasks]]
             cmd = "cargo"
@@ -272,6 +279,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_colors_config_with_lack_of_success_key() {
+        init_logger();
         let config_content = r#"
             [[tasks]]
             cmd = "cargo"
@@ -292,6 +300,7 @@ mod test {
     #[test]
     #[should_panic]
     fn test_colors_config_with_lack_of_colors_key() {
+        init_logger();
         let config_content = r#"
             [[tasks]]
             cmd = "cargo"
@@ -307,6 +316,7 @@ mod test {
 
     #[test]
     fn test_store_config() -> Result<()> {
+        init_logger();
         let config_content = r#"[[tasks]]
 cmd = "cargo"
 args = ["check"]
