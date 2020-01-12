@@ -80,7 +80,13 @@ fn init_config<'a>(args: ArgMatches<'a>) -> Result<()> {
 
 fn handle_env_variables(config: &Config) -> Result<()> {
     if let Some(env) = config.env() {
-        env.iter().for_each(|(k, v)| env::set_var(k, v))
+        debug!("setting up env variables");
+        env.iter().for_each(|(k, v)| {
+            debug!("setting {} = {}", k, v);
+            env::set_var(k, v);
+        })
+    } else {
+        debug!("no env variables to set");
     }
     Ok(())
 }
