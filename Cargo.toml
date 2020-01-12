@@ -1,6 +1,6 @@
 [package]
 name = "cargo-blinc"
-version = "0.5.1"
+version = "0.6.0"
 authors = ["Bartosz Zbytniewski <bartosz.zbytniewski.dev@gmail.com>"]
 description = "Notifies about commands exit code using LED light blink(1)"
 keywords = ["blink(1)", "blink", "notify"]
