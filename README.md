@@ -94,9 +94,36 @@ args = ["test"]
 pending = ["blue", "white"]
 failure = "red"
 success = "green"
+
+[env]
 ```
 
 Run `cargo blinc --config <path>` to specify path to the configuration file. The default value is `.blinc`.
+
+The `[env]` section is empty by default. It allows to specify environment variables during execution
+of configured `[[tasks]]`. Example:
+
+```toml
+[[tasks]]
+cmd = "cargo"
+args = ["check"]
+
+[[tasks]]
+cmd = "cargo"
+args = ["test"]
+
+[colors]
+pending = ["blue", "white"]
+failure = "red"
+success = "green"
+
+[env]
+RUST_LOG = "debug"
+API_KEY = "1231431"
+```
+
+If you don't have a need to specify environment variables, you can remove the section.
+
 
 # <p id="license">License</p>
 
