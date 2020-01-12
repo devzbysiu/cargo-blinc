@@ -21,28 +21,14 @@ fn main() -> Result<()> {
     let arguments = parse_args();
     if arguments.is_present("init") {
         debug!("init argument passed, initializing config");
-        Config::default().store(
-            arguments
-                .value_of("init")
-                .expect("no path specified for init subcommand"),
-        )?;
+        init_config(arguments)?;
         process::exit(0);
     }
-    let config = Config::get(
-        arguments
-            .value_of("config")
-            .expect("No config option passed"),
-    )?;
-    let tx = transition(&config)?.start()?;
-    for task in config.tasks() {
-        debug!("executing {:?}", task);
-        if !task.run()?.success() {
-            tx.notify_failure()?;
-            debug!("task failed, exiting");
-            process::exit(1);
-        }
-    }
-    tx.notify_success()?;
+    let config_path = arguments
+        .value_of("config")
+        .expect("no config option passed");
+    let config = Config::get(config_path)?;
+    handle_tasks_execution(&config)?;
     Ok(())
 }
 
@@ -80,6 +66,28 @@ fn parse_args<'a>() -> ArgMatches<'a> {
         .expect("blinc subcommand should be present");
     debug!("arguments: {:?}", arguments);
     arguments.clone()
+}
+
+fn init_config<'a>(args: ArgMatches<'a>) -> Result<()> {
+    let init_path = args
+        .value_of("init")
+        .expect("no path specified for init subcommand");
+    Config::default().store(init_path)?;
+    Ok(())
+}
+
+fn handle_tasks_execution(config: &Config) -> Result<()> {
+    let tx = transition(&config)?.start()?;
+    for task in config.tasks() {
+        debug!("executing {:?}", task);
+        if !task.run()?.success() {
+            tx.notify_failure()?;
+            debug!("task failed, exiting");
+            process::exit(1);
+        }
+    }
+    tx.notify_success()?;
+    Ok(())
 }
 
 fn transition(config: &Config) -> Result<Transition> {
