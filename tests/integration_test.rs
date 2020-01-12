@@ -112,6 +112,8 @@ args = ["test"]
 pending = ["blue", "white"]
 failure = "red"
 success = "green"
+
+[env]
 "#
     );
     fs::remove_file(".blinc").unwrap();
@@ -149,6 +151,8 @@ args = ["test"]
 pending = ["blue", "white"]
 failure = "red"
 success = "green"
+
+[env]
 "#
     );
 

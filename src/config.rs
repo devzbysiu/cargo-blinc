@@ -4,6 +4,7 @@ use anyhow::Result;
 use log::debug;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
+use std::collections::HashMap;
 use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -14,6 +15,7 @@ use std::path::Path;
 pub(crate) struct Config {
     tasks: Vec<Task>,
     colors: Colors,
+    env: Option<HashMap<String, String>>,
 }
 
 impl Config {
@@ -92,6 +94,7 @@ impl Default for Config {
                 Task::new("cargo", &["test"]),
             ],
             colors: Colors::new(&["blue", "white"], "red", "green"),
+            env: Some(HashMap::new()),
         }
     }
 }
@@ -312,6 +315,8 @@ args = ["test"]
 pending = ["blue", "white"]
 failure = "red"
 success = "green"
+
+[env]
 "#
         .to_string();
 
