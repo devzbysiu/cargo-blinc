@@ -6,6 +6,7 @@ use clap::Arg;
 use clap::ArgMatches;
 use config::Config;
 use log::debug;
+use std::env;
 use std::process;
 use transition::Transition;
 
@@ -28,6 +29,7 @@ fn main() -> Result<()> {
         .value_of("config")
         .expect("no config option passed");
     let config = Config::get(config_path)?;
+    handle_env_variables(&config)?;
     handle_tasks_execution(&config)?;
     Ok(())
 }
@@ -73,6 +75,13 @@ fn init_config<'a>(args: ArgMatches<'a>) -> Result<()> {
         .value_of("init")
         .expect("no path specified for init subcommand");
     Config::default().store(init_path)?;
+    Ok(())
+}
+
+fn handle_env_variables(config: &Config) -> Result<()> {
+    if let Some(env) = config.env() {
+        env.iter().for_each(|(k, v)| env::set_var(k, v))
+    }
     Ok(())
 }
 

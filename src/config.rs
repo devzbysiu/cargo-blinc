@@ -64,6 +64,10 @@ impl Config {
         &self.tasks
     }
 
+    pub(crate) fn env(&self) -> &Option<HashMap<String, String>> {
+        &self.env
+    }
+
     pub(crate) fn pending(&self) -> &Vec<String> {
         self.colors.pending()
     }
