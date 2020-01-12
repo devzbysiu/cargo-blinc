@@ -11,6 +11,7 @@ use std::process::Command;
 #[test]
 #[serial]
 fn test_help_message() {
+    init_logger();
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
     cmd.arg("blinc");
     cmd.arg("--help");
@@ -28,6 +29,7 @@ fn test_help_message() {
 #[test]
 #[serial]
 fn test_command_without_arguments() {
+    init_logger();
     create_config(
         r#"
         [[tasks]]
@@ -51,6 +53,7 @@ fn test_command_without_arguments() {
 #[test]
 #[serial]
 fn test_command_with_invalid_argument() {
+    init_logger();
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
     cmd.arg("--invalid");
     cmd.assert()
@@ -64,6 +67,7 @@ fn test_command_with_invalid_argument() {
 #[test]
 #[serial]
 fn test_command_with_specified_path_to_config() {
+    init_logger();
     create_config(
         r#"
         [[tasks]]
@@ -91,6 +95,7 @@ fn test_command_with_specified_path_to_config() {
 #[test]
 #[serial]
 fn test_config_init() {
+    init_logger();
     let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
     cmd.arg("blinc")
         .arg("--init")
@@ -122,6 +127,7 @@ success = "green"
 #[test]
 #[serial]
 fn test_config_init_when_file_already_exists() {
+    init_logger();
     create_config(
         r#"
         [[tasks]]
@@ -159,6 +165,42 @@ success = "green"
     fs::remove_file(".blinc").unwrap();
 }
 
+#[test]
+#[serial]
+fn test_env_variables_are_set() {
+    init_logger();
+    create_config(
+        r#"
+        [[tasks]]
+        cmd = "cargo"
+        args = ["check"]
+
+        [[tasks]]
+        cmd = "printenv"
+        args = ["ENV_VAR"]
+
+        [colors]
+        pending = ["blue", "white"]
+        failure = "red"
+        success = "green"
+
+        [env]
+        ENV_VAR = "env_var value"
+        "#,
+        ".blinc-config",
+    );
+
+    let mut cmd = Command::cargo_bin("cargo-blinc").unwrap();
+    cmd.arg("blinc")
+        .arg("--config")
+        .arg(".blinc-config")
+        .assert()
+        .stdout(contains("env_var value"))
+        .success();
+
+    fs::remove_file(".blinc-config").unwrap();
+}
+
 fn create_config<I: Into<String>, A: AsRef<Path>>(config_content: I, path: A) {
     let config_content = config_content.into();
     let config_content: String = config_content.replace("\t", "");
@@ -177,4 +219,8 @@ fn read_config<A: AsRef<Path>>(path: A) -> String {
         .and_then(|mut file| file.read_to_string(&mut config_content))
         .unwrap();
     config_content
+}
+
+fn init_logger() {
+    let _ = env_logger::builder().is_test(true).try_init();
 }
