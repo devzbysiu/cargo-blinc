@@ -55,7 +55,7 @@ This crate allows to run arbitrary commands and indicate the status of its execu
 
 # <p id="demo">Demo</p>
 
-## --- TODO ---
+![Demo GIF](./res/demo.gif)
 
 # <p id="installation">Installation</p>
 
