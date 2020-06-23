@@ -70,7 +70,8 @@ fn parse_args<'a>() -> ArgMatches<'a> {
     arguments.clone()
 }
 
-fn init_config<'a>(args: ArgMatches<'a>) -> Result<()> {
+#[allow(clippy::needless_pass_by_value)]
+fn init_config(args: ArgMatches<'_>) -> Result<()> {
     let init_path = args
         .value_of("init")
         .expect("no path specified for init subcommand");
