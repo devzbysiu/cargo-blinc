@@ -7,6 +7,7 @@
   </p>
 
   <p>
+    <img src="https://github.com/devzbysiu/cargo-blinc/workflows/Main/badge.svg" alt="Build status" />
     <a href="https://crates.io/crates/cargo-blinc">
       <img src="https://img.shields.io/crates/v/cargo-blinc?color=%2388C0D0&logoColor=%234C566A&style=flat-square" alt="Crates.io version" />
     </a>
