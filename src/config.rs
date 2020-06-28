@@ -10,6 +10,7 @@ use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use std::path::Path;
+use transition::Led;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub(crate) struct Config {
@@ -68,15 +69,15 @@ impl Config {
         &self.env
     }
 
-    pub(crate) fn pending(&self) -> &Vec<String> {
+    pub(crate) fn pending(&self) -> &[Led] {
         self.colors.pending()
     }
 
-    pub(crate) fn failure(&self) -> &str {
+    pub(crate) fn failure(&self) -> &Led {
         self.colors.failure()
     }
 
-    pub(crate) fn success(&self) -> &str {
+    pub(crate) fn success(&self) -> &Led {
         self.colors.success()
     }
 }
@@ -97,7 +98,7 @@ impl Default for Config {
                 Task::new("cargo", &["check"]),
                 Task::new("cargo", &["test"]),
             ],
-            colors: Colors::new(&["blue", "white"], "red", "green"),
+            colors: Colors::new(vec![Led::Blue, Led::Blank], Led::Red, Led::Green),
             env: Some(HashMap::new()),
         }
     }
@@ -121,7 +122,7 @@ mod test {
             args = ["test"]
 
             [colors]
-            pending = ["blue", "white"]
+            pending = ["blue", "blank"]
             failure = "red"
             success = "green"
         "#
@@ -129,8 +130,8 @@ mod test {
 
         let c = Config::read(&mut ReaderStub::new(config_content))?;
 
-        assert_eq!(c.pending()[0], "blue", "Testing transition");
-        assert_eq!(c.pending()[1], "white", "Testing transition");
+        assert_eq!(c.pending()[0], Led::Blue, "Testing transition");
+        assert_eq!(c.pending()[1], Led::Blank, "Testing transition");
         assert_eq!(
             c.tasks().first().unwrap().command(),
             "cargo",
@@ -141,8 +142,8 @@ mod test {
             vec!["check"],
             "Testing first task arguments"
         );
-        assert_eq!(c.failure(), "red", "Testing failure color");
-        assert_eq!(c.success(), "green", "Testing success color");
+        assert_eq!(c.failure(), &Led::Red, "Testing failure color");
+        assert_eq!(c.success(), &Led::Green, "Testing success color");
 
         Ok(())
     }
@@ -160,7 +161,7 @@ mod test {
             args = ["test"]
 
             [colors]
-            pending = ["blue", "white"]
+            pending = ["blue", "blank"]
             failure = "red"
             success = "green"
         "#
@@ -176,7 +177,7 @@ mod test {
             [[tasks]]
 
             [colors]
-            pending = ["blue", "white"]
+            pending = ["blue", "blank"]
             failure = "red"
             success = "green"
         "#
@@ -190,7 +191,7 @@ mod test {
         init_logger();
         let config_content = r#"
             [colors]
-            pending = ["blue", "white"]
+            pending = ["blue", "blank"]
             failure = "red"
             success = "green"
         "#
@@ -209,15 +210,15 @@ mod test {
             cmd = "cargo"
 
             [colors]
-            pending = ["blue", "white"]
+            pending = ["blue", "blank"]
             failure = "red"
             success = "green"
         "#
         .to_string();
         let c = Config::read(&mut ReaderStub::new(config_content))?;
 
-        assert_eq!(c.pending()[0], "blue", "Testing transition");
-        assert_eq!(c.pending()[1], "white", "Testing transition");
+        assert_eq!(c.pending()[0], Led::Blue, "Testing transition");
+        assert_eq!(c.pending()[1], Led::Blank, "Testing transition");
         assert_eq!(
             c.tasks().first().unwrap().command(),
             "cargo",
@@ -228,8 +229,8 @@ mod test {
             Vec::<String>::new(),
             "Testing first task arguments"
         );
-        assert_eq!(c.failure(), "red", "Testing failure color");
-        assert_eq!(c.success(), "green", "Testing success color");
+        assert_eq!(c.failure(), &Led::Red, "Testing failure color");
+        assert_eq!(c.success(), &Led::Green, "Testing success color");
 
         Ok(())
     }
@@ -269,7 +270,7 @@ mod test {
             args = ["test"]
 
             [colors]
-            pending = ["blue", "white"]
+            pending = ["blue", "blank"]
             success = "green"
         "#
         .to_string();
@@ -290,7 +291,7 @@ mod test {
             args = ["test"]
 
             [colors]
-            pending = ["blue", "white"]
+            pending = ["blue", "blank"]
             failure = "red"
         "#
         .to_string();
@@ -326,7 +327,7 @@ cmd = "cargo"
 args = ["test"]
 
 [colors]
-pending = ["blue", "white"]
+pending = ["blue", "blank"]
 failure = "red"
 success = "green"
 

@@ -37,7 +37,7 @@ fn test_command_without_arguments() {
         args = ["check"]
 
         [colors]
-        pending = ["blue", "white"]
+        pending = ["blue", "blank"]
         failure = "red"
         success = "green"
         "#,
@@ -75,7 +75,7 @@ fn test_command_with_specified_path_to_config() {
         args = ["check"]
 
         [colors]
-        pending = ["blue", "white"]
+        pending = ["blue", "blank"]
         failure = "red"
         success = "green"
         "#,
@@ -114,7 +114,7 @@ cmd = "cargo"
 args = ["test"]
 
 [colors]
-pending = ["blue", "white"]
+pending = ["blue", "blank"]
 failure = "red"
 success = "green"
 
@@ -154,7 +154,7 @@ cmd = "cargo"
 args = ["test"]
 
 [colors]
-pending = ["blue", "white"]
+pending = ["blue", "blank"]
 failure = "red"
 success = "green"
 
@@ -180,7 +180,7 @@ fn test_env_variables_are_set() {
         args = ["ENV_VAR"]
 
         [colors]
-        pending = ["blue", "white"]
+        pending = ["blue", "blank"]
         failure = "red"
         success = "green"
 
