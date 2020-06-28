@@ -1,3 +1,8 @@
+//! This binary allows to run predefined tasks and notify you about status of those tasks using LED
+//! light [blink(1)](https://blink1.thingm.com/).
+
+#![deny(missing_docs)]
+
 use anyhow::Result;
 use args::parse_args;
 use clap::ArgMatches;

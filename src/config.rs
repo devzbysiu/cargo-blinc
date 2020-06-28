@@ -106,8 +106,10 @@ impl Default for Config {
 
 #[cfg(test)]
 mod test {
-    use super::*;
-    use crate::testutils::*;
+    use super::Config;
+    use crate::testutils::{init_logger, ReaderStub, WriterMock};
+    use crate::Result;
+    use transition::Led;
 
     #[test]
     fn test_load_config_with_valid_config() -> Result<()> {

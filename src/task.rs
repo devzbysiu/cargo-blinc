@@ -23,7 +23,7 @@ impl Task {
     }
 
     pub(crate) fn args(&self) -> Vec<String> {
-        self.args.clone().unwrap_or_else(|| vec![])
+        self.args.clone().unwrap_or_else(Vec::new)
     }
 
     pub(crate) fn run(&self) -> Result<ExitStatus> {
