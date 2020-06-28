@@ -22,6 +22,16 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout Repo
       uses: actions/checkout@v2
+      with:
+        path: ./cargo-blinc
+
+    # Clone private dependency - mock-server
+    - name: Checkout transition
+      uses: actions/checkout@v2
+      with:
+        repository: devzbysiu/transition
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        path: ./transition
 
     # Use cargo make https://github.com/davidB/rust-cargo-make
     - name: Run cargo-make
@@ -31,6 +41,6 @@ jobs:
         override: true
     - uses: davidB/rust-cargo-make@v1
     - name: Run tests
-      run: cargo make --profile ci all
+      run: cd ./cargo-blinc && cargo make --profile ci all
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
