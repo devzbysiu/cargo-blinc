@@ -100,8 +100,7 @@ mod test {
             success = "green"
         "#,
             timestamp
-        )
-        .to_string();
+        );
         let config = Config::read(&mut ReaderStub::new(config_content)).unwrap();
         let blinc = Blinc::new(config).unwrap();
         blinc.exec_tasks().unwrap();
