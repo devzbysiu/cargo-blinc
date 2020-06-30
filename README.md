@@ -2,9 +2,9 @@
 
   <h1><code>cargo-blinc</code></h1>
 
-  <p>
+  <h3>
     <strong>Instant feedback on the state of your tests<a href="#star">*</a></strong>
-  </p>
+  </h3>
 
   <p>
     <img src="https://github.com/devzbysiu/cargo-blinc/workflows/Main/badge.svg" alt="Build status" />
@@ -36,7 +36,7 @@
     <a href="#contribution">Contribution</a>
   </h3>
 
-  <sub>Built with 🦀</sub>
+  <sub><h4>Built with 🦀</h4></sub>
 </div>
 
 # <p id="about">About</p>
