@@ -22,7 +22,7 @@
     </a>
   </p>
 
-  <h4>
+  <h3>
     <a href="#about">About</a>
     <span> | </span>
     <a href="#demo">Demo</a>
