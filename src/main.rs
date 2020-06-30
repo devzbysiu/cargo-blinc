@@ -5,14 +5,14 @@
 
 use anyhow::Result;
 use args::Opt;
+use blinc::Blinc;
 use config::Config;
 use log::debug;
-use std::env;
 use std::process;
 use structopt::StructOpt;
-use transition::Transition;
 
 mod args;
+mod blinc;
 mod colors;
 mod config;
 mod task;
@@ -31,48 +31,4 @@ fn main() -> Result<()> {
     }
     Blinc::new(Config::get(config)?)?.exec_tasks()?;
     Ok(())
-}
-
-struct Blinc {
-    config: Config,
-}
-
-impl Blinc {
-    fn new(config: Config) -> Result<Self> {
-        Blinc::init(&config)?;
-        Ok(Self { config })
-    }
-
-    fn init(config: &Config) -> Result<()> {
-        if let Some(env) = config.env() {
-            debug!("setting up env variables");
-            env.iter().for_each(|(k, v)| {
-                debug!("setting {} = {}", k, v);
-                env::set_var(k, v);
-            })
-        } else {
-            debug!("no env variables to set");
-        }
-        Ok(())
-    }
-
-    fn exec_tasks(&self) -> Result<()> {
-        let tx = transition(&self.config)?.start()?;
-        for task in self.config.tasks() {
-            debug!("executing {:?}", task);
-            if !task.run()?.success() {
-                tx.notify_failure()?;
-                debug!("task failed, exiting");
-                process::exit(1);
-            }
-        }
-        tx.notify_success()?;
-        Ok(())
-    }
-}
-
-fn transition(config: &Config) -> Result<Transition> {
-    Ok(Transition::new(config.pending())
-        .on_success(config.success())
-        .on_failure(config.failure()))
 }
