@@ -35,7 +35,7 @@ impl Config {
         Self::read(&mut File::open(path.as_ref())?)
     }
 
-    fn read<R: Read>(read: &mut R) -> Result<Self> {
+    pub(crate) fn read<R: Read>(read: &mut R) -> Result<Self> {
         Ok(read_config(read)?)
     }
 
