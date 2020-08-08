@@ -13,7 +13,7 @@ documentation = "https://docs.rs/cargo-blinc"
 edition = "2018"
 
 [dependencies]
-transition = { path = "../transition", version = "1.2.0" }
+transition = { path = "../transition", version = "0.1.0" }
 toml = "0.5"
 serde = "1.0.104"
 serde_derive = "1.0.104"
