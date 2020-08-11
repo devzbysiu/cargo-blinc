@@ -70,6 +70,8 @@ To upgrade
 cargo install --force cargo-blinc
 ```
 
+**Make sure that you have correct access rights to access blink(1) device. See udev rules [here](https://github.com/todbot/blink1/blob/master/linux/51-blink1.rules).**
+
 # <p id="configuration">Configuration</p>
 
 By default no configuration is required if these settings satisfy you:
