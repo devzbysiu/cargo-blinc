@@ -44,7 +44,7 @@ impl Blinc {
 }
 
 fn transition(config: &Config) -> Result<Transition> {
-    Ok(Transition::new(config.pending())
+    Ok(Transition::new(config.pending())?
         .on_success(config.success())
         .on_failure(config.failure()))
 }
