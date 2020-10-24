@@ -20,12 +20,23 @@ args = ["clippy", "--all-targets", "--all-features", "--", "-W", "clippy::pedant
 command = "cargo"
 args = ["build", "--release"]
 
+[tasks.coverage]
+clear = true
+command = "cargo"
+args = ["tarpaulin", "--ignore-tests", "-v", "--out", "Xml"]
+
+[tasks.coverage-report]
+clear = true
+command = "cargo"
+args = ["tarpaulin", "-t", "180", "--ignore-tests", "-v", "--out", "Html"] # -t 180 is required for some reason
+
 [tasks.all]
 dependencies = [
     "format",
     "clippy",
-    "build",
-    "test",
-    "coverage-flow",
     "codecov-flow"
 ]
+
+[env]
+CARGO_MAKE_COVERAGE_PROVIDER = "tarpaulin"
+RUST_TEST_THREADS = 1

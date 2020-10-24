@@ -2,3 +2,4 @@
 **/*.rs.bk
 cobertura.xml
 .development.env
+tarpaulin-report.html
