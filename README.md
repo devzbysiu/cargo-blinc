@@ -7,7 +7,7 @@
   </h3>
 
   <p>
-    <img src="https://github.com/devzbysiu/cargo-blinc/workflows/Main/badge.svg" alt="Build status" />
+    <img src="https://img.shields.io/github/workflow/status/devzbysiu/cargo-blinc/ci?style=for-the-badge" alt="CI status badge" />
     <a href="https://crates.io/crates/cargo-blinc">
       <img src="https://img.shields.io/crates/v/cargo-blinc?style=for-the-badge" alt="Crates.io version" />
     </a>
@@ -16,9 +16,6 @@
     </a>
     <a href="https://crates.io/crates/cargo-blinc">
       <img src="https://img.shields.io/crates/l/cargo-blinc?style=for-the-badge" alt="License"/>
-    </a>
-    <a href="https://docs.rs/cargo-blinc">
-      <img src="https://img.shields.io/badge/docs-latest-blue.svg?style=for-the-badge" alt="docs.rs docs" />
     </a>
   </p>
 
