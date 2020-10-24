@@ -28,7 +28,7 @@ args = ["tarpaulin", "--ignore-tests", "-v", "--out", "Xml"]
 [tasks.coverage-report]
 clear = true
 command = "cargo"
-args = ["tarpaulin", "-t", "300", "--ignore-tests", "-v", "--out", "Html"] # -t 180 is required for some reason
+args = ["tarpaulin", "-t", "600", "--ignore-tests", "-v", "--out", "Html"] # -t 600 is required for some reason
 
 [tasks.all]
 dependencies = [
