@@ -34,7 +34,7 @@ fn test_command_without_arguments() {
         r#"
         [[tasks]]
         cmd = "cargo"
-        args = ["check"]
+        args = ["--version"]
 
         [colors]
         pending = ["blue", "blank"]
@@ -72,7 +72,7 @@ fn test_command_with_specified_path_to_config() {
         r#"
         [[tasks]]
         cmd = "cargo"
-        args = ["check"]
+        args = ["--version"]
 
         [colors]
         pending = ["blue", "blank"]
@@ -132,7 +132,7 @@ fn test_config_init_when_file_already_exists() {
         r#"
         [[tasks]]
         cmd = "cargo"
-        args = ["check"]
+        args = ["--version"]
         "#,
         ".blinc",
     );
@@ -173,7 +173,7 @@ fn test_env_variables_are_set() {
         r#"
         [[tasks]]
         cmd = "cargo"
-        args = ["check"]
+        args = ["--version"]
 
         [[tasks]]
         cmd = "printenv"
