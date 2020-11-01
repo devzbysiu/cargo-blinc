@@ -574,6 +574,8 @@ dependencies = [
 [[package]]
 name = "transition"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c78453e994962f292d7628ad5bf8b2f33d0f62bcf93130bfdd5183615a7e40aa"
 dependencies = [
  "blinkrs",
  "crossbeam-channel",

@@ -3,7 +3,7 @@ name = "cargo-blinc"
 version = "0.1.0"
 authors = ["Bartosz Zbytniewski <bartosz.zbytniewski.dev@gmail.com>"]
 description = "Notifies about commands exit code using LED light blink(1)"
-keywords = ["blink(1)", "blink", "notify"]
+keywords = ["blink", "notify"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
 categories = ["command-line-utilities", "development-tools::cargo-plugins"]
@@ -13,7 +13,7 @@ documentation = "https://docs.rs/cargo-blinc"
 edition = "2018"
 
 [dependencies]
-transition = { path = "../transition", version = "0.1.0" }
+transition = "0.1.0"
 toml = "0.5"
 serde = "1.0.104"
 serde_derive = "1.0.104"
