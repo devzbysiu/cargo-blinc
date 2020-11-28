@@ -62,7 +62,7 @@ mod test {
     #[test]
     fn test_env_variables_are_set() {
         let config_content = r#"
-            [[tasks]]
+            [[task]]
             cmd = "echo"
             args = [""]
 
@@ -90,7 +90,7 @@ mod test {
             .as_millis();
         let config_content = format!(
             r#"
-            [[tasks]]
+            [[task]]
             cmd = "touch"
             args = ["/tmp/cargo-blinc-test-{}"]
 

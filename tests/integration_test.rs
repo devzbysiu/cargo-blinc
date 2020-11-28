@@ -32,7 +32,7 @@ fn test_command_without_arguments() {
     init_logger();
     create_config(
         r#"
-        [[tasks]]
+        [[task]]
         cmd = "cargo"
         args = ["--version"]
 
@@ -70,7 +70,7 @@ fn test_command_with_specified_path_to_config() {
     init_logger();
     create_config(
         r#"
-        [[tasks]]
+        [[task]]
         cmd = "cargo"
         args = ["--version"]
 
@@ -105,11 +105,11 @@ fn test_config_init() {
 
     assert_eq!(
         read_config(".blinc"),
-        r#"[[tasks]]
+        r#"[[task]]
 cmd = "cargo"
 args = ["check"]
 
-[[tasks]]
+[[task]]
 cmd = "cargo"
 args = ["test"]
 
@@ -130,7 +130,7 @@ fn test_config_init_when_file_already_exists() {
     init_logger();
     create_config(
         r#"
-        [[tasks]]
+        [[task]]
         cmd = "cargo"
         args = ["--version"]
         "#,
@@ -145,11 +145,11 @@ fn test_config_init_when_file_already_exists() {
 
     assert_eq!(
         read_config(".blinc"),
-        r#"[[tasks]]
+        r#"[[task]]
 cmd = "cargo"
 args = ["check"]
 
-[[tasks]]
+[[task]]
 cmd = "cargo"
 args = ["test"]
 
@@ -171,11 +171,11 @@ fn test_env_variables_are_set() {
     init_logger();
     create_config(
         r#"
-        [[tasks]]
+        [[task]]
         cmd = "cargo"
         args = ["--version"]
 
-        [[tasks]]
+        [[task]]
         cmd = "printenv"
         args = ["ENV_VAR"]
 

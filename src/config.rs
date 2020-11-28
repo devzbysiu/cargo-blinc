@@ -14,6 +14,7 @@ use transition::Led;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub(crate) struct Config {
+    #[serde(rename = "task")]
     tasks: Vec<Task>,
     colors: Colors,
     env: Option<HashMap<String, String>>,
@@ -115,11 +116,11 @@ mod test {
     fn test_load_config_with_valid_config() -> Result<()> {
         init_logger();
         let config_content = r#"
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["check"]
 
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["test"]
 
@@ -155,10 +156,10 @@ mod test {
     fn test_tasks_config_with_lack_of_cmd_key() {
         init_logger();
         let config_content = r#"
-            [[tasks]]
+            [[task]]
             args = ["check"]
 
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["test"]
 
@@ -176,7 +177,7 @@ mod test {
     fn test_tasks_config_with_empty_tasks_key() {
         init_logger();
         let config_content = r#"
-            [[tasks]]
+            [[task]]
 
             [colors]
             pending = ["blue", "blank"]
@@ -205,10 +206,10 @@ mod test {
     fn test_tasks_config_with_lack_of_optional_args_key() -> Result<()> {
         init_logger();
         let config_content = r#"
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
 
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
 
             [colors]
@@ -242,11 +243,11 @@ mod test {
     fn test_colors_config_with_lack_of_pending_key() {
         init_logger();
         let config_content = r#"
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["check"]
 
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["test"]
 
@@ -263,11 +264,11 @@ mod test {
     fn test_colors_config_with_lack_of_failure_key() {
         init_logger();
         let config_content = r#"
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["check"]
 
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["test"]
 
@@ -284,11 +285,11 @@ mod test {
     fn test_colors_config_with_lack_of_success_key() {
         init_logger();
         let config_content = r#"
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["check"]
 
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["test"]
 
@@ -305,11 +306,11 @@ mod test {
     fn test_colors_config_with_lack_of_colors_key() {
         init_logger();
         let config_content = r#"
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["check"]
 
-            [[tasks]]
+            [[task]]
             cmd = "cargo"
             args = ["test"]
         "#
@@ -320,11 +321,11 @@ mod test {
     #[test]
     fn test_store_config() -> Result<()> {
         init_logger();
-        let config_content = r#"[[tasks]]
+        let config_content = r#"[[task]]
 cmd = "cargo"
 args = ["check"]
 
-[[tasks]]
+[[task]]
 cmd = "cargo"
 args = ["test"]
 
