@@ -29,6 +29,6 @@ fn main() -> Result<()> {
         Config::default().store(init.unwrap())?;
         process::exit(0);
     }
-    Blinc::new(Config::get(config)?)?.exec_tasks()?;
+    Blinc::new(Config::get(config)?).exec_tasks()?;
     Ok(())
 }

@@ -10,12 +10,12 @@ pub(crate) struct Blinc {
 }
 
 impl Blinc {
-    pub(crate) fn new(config: Config) -> Result<Self> {
-        Blinc::init(&config)?;
-        Ok(Self { config })
+    pub(crate) fn new(config: Config) -> Self {
+        Blinc::init(&config);
+        Self { config }
     }
 
-    pub(crate) fn init(config: &Config) -> Result<()> {
+    pub(crate) fn init(config: &Config) {
         if let Some(env) = config.env() {
             debug!("setting up env variables");
             env.iter().for_each(|(k, v)| {
@@ -25,7 +25,6 @@ impl Blinc {
         } else {
             debug!("no env variables to set");
         }
-        Ok(())
     }
 
     pub(crate) fn exec_tasks(&self) -> Result<()> {
@@ -76,7 +75,7 @@ mod test {
         "#
         .to_string();
         let config = Config::read(&mut ReaderStub::new(config_content)).unwrap();
-        Blinc::new(config).unwrap();
+        Blinc::new(config);
         assert_eq!(env::var("API_KEY").unwrap(), "10")
     }
 
@@ -102,7 +101,7 @@ mod test {
             timestamp
         );
         let config = Config::read(&mut ReaderStub::new(config_content)).unwrap();
-        let blinc = Blinc::new(config).unwrap();
+        let blinc = Blinc::new(config);
         blinc.exec_tasks().unwrap();
         assert_eq!(
             Path::new(&format!("/tmp/cargo-blinc-test-{}", timestamp)).exists(),
