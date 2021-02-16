@@ -13,8 +13,7 @@ documentation = "https://docs.rs/cargo-blinc"
 edition = "2018"
 
 [dependencies]
-# TODO: this should be moved to officially released version, when it happens
-transition = { git = "https://github.com/devzbysiu/transition" }
+transition = "0.1.1"
 toml = "0.5"
 serde = "1.0.104"
 serde_derive = "1.0.104"
@@ -27,3 +26,7 @@ structopt = "0.3.15"
 assert_cmd = "1.0.1"
 predicates = "1.0.2"
 serial_test = "0.5.0"
+
+[patch.crates-io]
+# TODO: move to officially released parking_lot when it's released
+parking_lot = { git = "https://github.com/Amanieu/parking_lot" }
