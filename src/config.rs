@@ -37,7 +37,12 @@ impl Config {
     }
 
     pub(crate) fn read<R: Read>(read: &mut R) -> Result<Self> {
-        read_config(read)
+        let mut config_content = String::new();
+        read.read_to_string(&mut config_content)?;
+        debug!("read config {}", config_content);
+        let config = toml::from_str(&config_content)?;
+        debug!("created config struct: {:?}", config);
+        Ok(config)
     }
 
     pub(crate) fn store<A: AsRef<Path>>(&self, path: A) -> Result<()> {
@@ -81,15 +86,6 @@ impl Config {
     pub(crate) fn success(&self) -> &Led {
         self.colors.success()
     }
-}
-
-fn read_config<R: Read>(read: &mut R) -> Result<Config> {
-    let mut config_content = String::new();
-    read.read_to_string(&mut config_content)?;
-    debug!("read config {}", config_content);
-    let config = toml::from_str(&config_content)?;
-    debug!("created config struct: {:?}", config);
-    Ok(config)
 }
 
 impl Default for Config {
