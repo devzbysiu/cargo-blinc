@@ -37,7 +37,7 @@ impl Config {
     }
 
     pub(crate) fn read<R: Read>(read: &mut R) -> Result<Self> {
-        Ok(read_config(read)?)
+        read_config(read)
     }
 
     pub(crate) fn store<A: AsRef<Path>>(&self, path: A) -> Result<()> {
