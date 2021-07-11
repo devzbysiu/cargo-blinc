@@ -337,7 +337,7 @@ success = "green"
         let mut writer = WriterMock::new(&config_content);
         Config::default().write(&mut writer)?;
 
-        assert_eq!(true, writer.all_config_written(), "Testing writing config");
+        assert!(writer.all_config_written(), "Testing writing config");
 
         Ok(())
     }

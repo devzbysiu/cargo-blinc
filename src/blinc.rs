@@ -103,10 +103,7 @@ mod test {
         let config = Config::read(&mut ReaderStub::new(config_content)).unwrap();
         let blinc = Blinc::new(config);
         blinc.exec_tasks().unwrap();
-        assert_eq!(
-            Path::new(&format!("/tmp/cargo-blinc-test-{}", timestamp)).exists(),
-            true
-        );
+        assert!(Path::new(&format!("/tmp/cargo-blinc-test-{}", timestamp)).exists());
         remove_file(format!("/tmp/cargo-blinc-test-{}", timestamp)).unwrap();
     }
 }
