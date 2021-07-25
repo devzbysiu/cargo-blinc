@@ -25,14 +25,7 @@ jobs:
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         path: ./transition
 
-    - uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          ./target
-          !./target/tarpaulin
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    - uses: Swatinem/rust-cache@v1
 
     - name: Run cargo-make
       uses: actions-rs/toolchain@v1
