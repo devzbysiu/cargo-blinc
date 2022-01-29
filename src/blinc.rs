@@ -18,10 +18,10 @@ impl Blinc {
     pub(crate) fn init(config: &Config) {
         if let Some(env) = config.env() {
             debug!("setting up env variables");
-            env.iter().for_each(|(k, v)| {
+            for (k, v) in env {
                 debug!("setting {} = {}", k, v);
                 env::set_var(k, v);
-            })
+            }
         } else {
             debug!("no env variables to set");
         }
@@ -76,7 +76,7 @@ mod test {
         .to_string();
         let config = Config::read(&mut ReaderStub::new(config_content)).unwrap();
         Blinc::new(config);
-        assert_eq!(env::var("API_KEY").unwrap(), "10")
+        assert_eq!(env::var("API_KEY").unwrap(), "10");
     }
 
     #[test]
