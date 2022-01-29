@@ -24,6 +24,6 @@ anyhow = "1.0.26"
 structopt = "0.3.15"
 
 [dev-dependencies]
-assert_cmd = "1.0.1"
+assert_cmd = "2.0.4"
 predicates = "2.0.0"
 serial_test = "0.5.0"
