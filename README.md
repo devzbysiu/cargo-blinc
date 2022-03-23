@@ -38,7 +38,7 @@
 
 # <p id="about">About</p>
 
-This crate allows to run arbitrary commands and indicate the status of its execution using USB notification light - [blink(1)](https://blink1.thingm.com/).
+This crate allows running arbitrary commands and indicate the status of its execution using USB notification light - [blink(1)](https://blink1.thingm.com/).
 
 <p id="star">*By default it runs <code>cargo test</code>. You can customize the commands and LED colors using <a href="#configuration">configuration file</a>.
 
@@ -71,7 +71,7 @@ cargo install --force cargo-blinc
 
 # <p id="configuration">Configuration</p>
 
-By default no configuration is required if these settings satisfy you:
+By default, no configuration is required if these settings satisfy you:
 - tasks: `cargo check`, `cargo test`
 - pending task color: **blue** (blinking)
 - failed task color: **red**
@@ -100,7 +100,7 @@ success = "green"
 
 Run `cargo blinc --config <path>` to specify path to the configuration file. The default value is `.blinc`.
 
-The `[env]` section is empty by default. It allows to specify environment variables during execution
+The `[env]` section is empty by default. It allows specifying environment variables during execution
 of configured `[[tasks]]`. Example:
 
 ```toml
@@ -132,7 +132,7 @@ This project is licensed under either of
 - Apache License, Version 2.0, (LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0)
 - MIT license (LICENSE-MIT or http://opensource.org/licenses/MIT)
 
-at your option.
+At your option.
 
 # <p id="contribution">Contribution</p>
 
