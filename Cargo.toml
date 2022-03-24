@@ -26,4 +26,4 @@ structopt = "0.3.15"
 [dev-dependencies]
 assert_cmd = "2.0.4"
 predicates = "2.0.0"
-serial_test = "0.5.0"
+serial_test = "0.6.0"
