@@ -203,7 +203,7 @@ fn test_env_variables_are_set() {
 
 fn create_config<I: Into<String>, A: AsRef<Path>>(config_content: I, path: A) {
     let config_content = config_content.into();
-    let config_content: String = config_content.replace("\t", "");
+    let config_content: String = config_content.replace('\t', "");
     let mut file = OpenOptions::new()
         .write(true)
         .truncate(true)
