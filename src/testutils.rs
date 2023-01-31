@@ -30,7 +30,7 @@ pub(crate) struct WriterMock {
 impl WriterMock {
     pub(crate) fn new<I: Into<String>>(expected_content: I) -> Self {
         Self {
-            written_content: "".to_string(),
+            written_content: String::new(),
             expected_content: expected_content.into(),
         }
     }

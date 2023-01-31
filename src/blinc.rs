@@ -91,19 +91,18 @@ mod test {
             r#"
             [[task]]
             cmd = "touch"
-            args = ["/tmp/cargo-blinc-test-{}"]
+            args = ["/tmp/cargo-blinc-test-{timestamp}"]
 
             [colors]
             pending = ["blue", "blank"]
             failure = "red"
             success = "green"
-        "#,
-            timestamp
+        "#
         );
         let config = Config::read(&mut ReaderStub::new(config_content)).unwrap();
         let blinc = Blinc::new(config);
         blinc.exec_tasks().unwrap();
-        assert!(Path::new(&format!("/tmp/cargo-blinc-test-{}", timestamp)).exists());
-        remove_file(format!("/tmp/cargo-blinc-test-{}", timestamp)).unwrap();
+        assert!(Path::new(&format!("/tmp/cargo-blinc-test-{timestamp}")).exists());
+        remove_file(format!("/tmp/cargo-blinc-test-{timestamp}")).unwrap();
     }
 }
