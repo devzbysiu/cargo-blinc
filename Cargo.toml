@@ -15,7 +15,7 @@ exclude = ["res/demo.gif"]
 
 [dependencies]
 transition = "0.1.1"
-toml = "0.7.1"
+toml = "0.8.0"
 serde = "1.0.152"
 serde_derive = "1.0.152"
 log = "0.4.17"
@@ -25,5 +25,5 @@ structopt = "0.3.26"
 
 [dev-dependencies]
 assert_cmd = "2.0.8"
-predicates = "2.1.5"
-serial_test = "1.0.0"
+predicates = "3.0.3"
+serial_test = "2.0.0"
